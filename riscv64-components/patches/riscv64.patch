@@ -1,0 +1,37 @@
+--- a/debian/rules
++++ b/debian/rules
+@@ -13,3 +13,6 @@
+ dh_auto_install
+ # fix paths in manpages
+ find debian/systemd-bootchart/usr/share/man/ -type f | xargs sed -ri 's_/usr(/lib/systemd/system|/lib[^/]|/lib/[^a-z])_\1_g'
++
++override_dh_auto_test:
++dh_auto_test --no-parallel
+diff --git a/src/architecture.h b/src/architecture.h
+index 26679e2..ca6d226 100644
+--- a/src/architecture.h
++++ b/src/architecture.h
+@@ -57,6 +57,8 @@ enum {
+         ARCHITECTURE_M68K,
+         ARCHITECTURE_TILEGX,
+         ARCHITECTURE_CRIS,
++        ARCHITECTURE_RISCV32,
++        ARCHITECTURE_RISCV64,
+         _ARCHITECTURE_MAX,
+         _ARCHITECTURE_INVALID = -1
+ };
+@@ -194,6 +196,14 @@ int uname_architecture(void);
+ #elif defined(__cris__)
+ #  define native_architecture() ARCHITECTURE_CRIS
+ #  error "Missing LIB_ARCH_TUPLE for CRIS"
++#elif defined(__riscv) && __riscv_xlen == 32
++#  define native_architecture() ARCHITECTURE_RISCV32
++#  define LIB_ARCH_TUPLE "riscv32-linux-gnu"
++#  define PROC_CPUINFO_MODEL "isa"
++#elif defined(__riscv) && __riscv_xlen == 64
++#  define native_architecture() ARCHITECTURE_RISCV64
++#  define LIB_ARCH_TUPLE "riscv64-linux-gnu"
++#  define PROC_CPUINFO_MODEL "isa"
+ #else
+ #  error "Please register your architecture here!"
+ #endif

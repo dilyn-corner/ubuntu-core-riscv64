@@ -1,0 +1,3 @@
+[submodule "kernel/snap/plugins"]
+	path = kernel/snap/plugins
+	url = https://github.com/dilyn-corner/snapcraft-kernel-plugin

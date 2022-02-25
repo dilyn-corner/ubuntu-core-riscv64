@@ -1,0 +1,78 @@
+name: riscv64-virt-kernel
+summary: A RISCV 64-bit kernel for Qemu's virt board
+description: This is a snapped kernel for an emulated RISCV system.
+
+grade: stable
+build-base: core20
+confinement: strict
+type: kernel
+adopt-info: kernel
+
+architectures:
+  - build-on:
+    - amd64
+    - riscv64
+    run-on: riscv64
+
+parts:
+  kernel:
+    plugin: x-kernel
+    source: git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/focal
+    source-type: git
+    source-branch: hwe-5.15
+    source-depth: 1
+    kernel-compiler: riscv64-linux-gnu-gcc-10
+    kernel-with-firmware: false
+    kernel-image-target: Image
+    #kernel-device-trees:
+    #  - sifive/hifive-unleashed-a00
+    kernel-initrd-channel: stable
+    kernel-initrd-compression: gz
+    kconfigflavour: generic
+    kconfigs:
+      - CONFIG_SYSTEM_REVOCATION_KEYS=""
+      - CONFIG_SYSTEM_TRUSTED_KEYS=""
+      - CONFIG_DEBUG_INFO_BTF=n
+      - CONFIG_SOUND=n
+      - CONFIG_DRM=n
+      - CONFIG_MEDIA_SUPPORT=n
+    override-build: |
+      export ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu-
+      snapcraftctl build
+      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/changelog -S version)
+      mkimage -f ${SNAPCRAFT_PROJECT_DIR}/fitImage.its ${SNAPCRAFT_PART_INSTALL}/fitImage
+    stage:
+      - System.map-*
+      - config-*
+      - fitImage
+      - initrd.img
+      - kernel.img
+      - modules
+      - dtbs/*
+      - -modules/*/build
+      - -modules/*/source
+  firmware:
+    plugin: nil
+    source: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+    source-type: git
+    source-branch: main
+    source-depth: 1
+    override-build: |
+      mkdir -p ${SNAPCRAFT_PART_INSTALL}/firmware
+      cp -r ${SNAPCRAFT_PART_SRC}/* ${SNAPCRAFT_PART_INSTALL}/firmware/
+
+build-packages:
+  - dpkg-dev
+  - flex
+  - bison
+  - libssl-dev
+  - libfdt-dev
+  - cpio
+  - binutils-riscv64-linux-gnu
+  - device-tree-compiler
+  - libelf-dev
+  - u-boot-tools
+  - on amd64:
+    - gcc-10-riscv64-linux-gnu
+  - else:
+    - gcc

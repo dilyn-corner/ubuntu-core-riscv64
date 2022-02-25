@@ -1,0 +1,33 @@
+/dts-v1/;
+  
+/ {
+    description = "Configuration to load OpenSBI before U-Boot";
+    images {
+        ramdisk {
+            description = "ramdisk";
+            data = /incbin/("parts/kernel/install/initrd.img");
+            type = "ramdisk";
+            arch = "riscv";
+            os = "linux";
+            compression = "none";
+        };
+        kernel {
+            description = "Linux kernel";
+            data = /incbin/("parts/kernel/install/kernel.img");
+            type = "kernel";
+            arch = "riscv";
+            os = "linux";
+            compression = "none";
+            load = <0x84000000>;
+            entry = <0x84000000>;
+        };
+    };
+    configurations {
+        default = "conf_1";
+        conf_1 {
+            description = "Boot Linux kernel with U-Boot & OpenSBI";
+            kernel = "kernel";
+            ramdisk = "ramdisk";
+        };
+    };
+};
