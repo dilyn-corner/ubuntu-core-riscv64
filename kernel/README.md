@@ -8,5 +8,7 @@ files for your particular device.
 This specific kernel is built with Qemu's RISC-V virt machine. No device tree is
 required for this machine; Qemu loads it into the machine's memory for us.
 
+*** Ensure you use at least Ubuntu Kernel version 5.11.0! ***
+
 Building:
 `snapcraft --destructive-mode --target-arch=riscv64 --enable-experimental-target-arch`
