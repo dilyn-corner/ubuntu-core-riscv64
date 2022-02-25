@@ -19,7 +19,7 @@ parts:
     plugin: x-kernel
     source: git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/focal
     source-type: git
-    source-branch: hwe-5.15
+    source-branch: hwe-5.11
     source-depth: 1
     kernel-compiler: riscv64-linux-gnu-gcc-10
     kernel-with-firmware: false
@@ -38,8 +38,13 @@ parts:
       - CONFIG_MEDIA_SUPPORT=n
     override-build: |
       export ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu-
+
+      mkdir -p parts/kernel/src/debian.hwe-5.11/config/riscv64/
+      cp ${SNAPCRAFT_PROJECT_DIR}/config parts/kernel/src/debian.hwe-5.11/config/riscv64/config.common.riscv64
+      cp ${SNAPCRAFT_PROJECT_DIR}/config parts/kernel/src/debian.hwe-5.11/config/riscv64/config.flavour.generic
+
       snapcraftctl build
-      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/changelog -S version)
+      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.11/changelog -S version)
       mkimage -f ${SNAPCRAFT_PROJECT_DIR}/fitImage.its ${SNAPCRAFT_PART_INSTALL}/fitImage
     stage:
       - System.map-*
