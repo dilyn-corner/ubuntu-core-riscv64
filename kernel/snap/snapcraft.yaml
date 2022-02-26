@@ -39,9 +39,10 @@ parts:
     override-build: |
       export ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu-
 
-      mkdir -p parts/kernel/src/debian.hwe-5.11/config/riscv64/
-      cp ${SNAPCRAFT_PROJECT_DIR}/config parts/kernel/src/debian.hwe-5.11/config/riscv64/config.common.riscv64
-      cp ${SNAPCRAFT_PROJECT_DIR}/config parts/kernel/src/debian.hwe-5.11/config/riscv64/config.flavour.generic
+      cp ${SNAPCRAFT_PROJECT_DIR}/uc-initrd_20-stable_riscv64.snap ${SNAPCRAFT_PART_BUILD}/
+      mkdir -p ${SNAPCRAFT_PART_SRC}/debian.hwe-5.11/config/riscv64/
+      cp ${SNAPCRAFT_PROJECT_DIR}/config ${SNAPCRAFT_PART_SRC}/debian.hwe-5.11/config/riscv64/config.common.riscv64
+      cp ${SNAPCRAFT_PROJECT_DIR}/config ${SNAPCRAFT_PART_SRC}/debian.hwe-5.11/config/riscv64/config.flavour.generic
 
       snapcraftctl build
       snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.11/changelog -S version)
