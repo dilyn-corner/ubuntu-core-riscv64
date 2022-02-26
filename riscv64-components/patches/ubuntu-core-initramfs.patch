@@ -84,38 +84,3 @@ index 35c6f74..b83c67c 100755
  	dh_strip -Xsnap-bootstrap
 +override_dh_auto_test:
 +	dh_auto_test --no-parallel
-diff --git a/vendor/systemd/meson.build b/vendor/systemd/meson.build
-index fc216d2..4ced8d7 100644
---- a/vendor/systemd/meson.build
-+++ b/vendor/systemd/meson.build
-@@ -671,8 +671,13 @@ conf.set_quoted('DEFAULT_NET_NAMING_SCHEME', default_net_naming_scheme)
- 
- time_epoch = get_option('time-epoch')
- if time_epoch == -1
--        NEWS = files('NEWS')
--        time_epoch = run_command(stat, '-c', '%Y', NEWS).stdout().to_int()
-+        source_date_epoch = run_command('sh', ['-c', 'echo "$SOURCE_DATE_EPOCH"']).stdout().strip()
-+        if source_date_epoch != ''
-+                time_epoch = source_date_epoch.to_int()
-+        else
-+                NEWS = files('NEWS')
-+                time_epoch = run_command(stat, '-c', '%Y', NEWS).stdout().to_int()
-+        endif
- endif
- conf.set('TIME_EPOCH', time_epoch)
- 
-@@ -2595,6 +2600,14 @@ executable('systemd-makefs',
-            install : true,
-            install_dir : rootlibexecdir)
- 
-+executable('systemd-fsckd',
-+           'src/fsckd/fsckd.c',
-+           include_directories : includes,
-+           link_with : [libshared],
-+           install_rpath : rootlibexecdir,
-+           install : true,
-+           install_dir : rootlibexecdir)
-+
- executable('systemd-sleep',
-            'src/sleep/sleep.c',
-            include_directories : includes,
