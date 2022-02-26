@@ -19,9 +19,13 @@ The `ubuntu-core-initramfs` tool is not built for RISC-V, and intentionally so.
 We must do it ourselves.
 
 To build your initrd...
+
 Install the following:
+
 dpkg -i systemd-bootchart_233-2_riscv64.deb
+
 dpkg -i dracut-core_051-1_riscv64.deb
+
 dpkg -i ubuntu-core-initramfs_51_riscv64.deb
 
 ```
