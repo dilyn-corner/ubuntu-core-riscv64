@@ -53,7 +53,8 @@ cd systemd-bootchart*/
 patch -p1 < ../patches/riscv64.patch
 dpkg-buildpackage -us -uc -nc
 
-dpkg -i ../systemd-bootchart_233-2_riscv64.deb
+cd ../
+dpkg -i systemd-bootchart_233-2_riscv64.deb
 
 # You might require a more recent version of Dracut! 
 wget http://ports.ubuntu.com/pool/universe/d/dracut/dracut-core_051-1_riscv64.deb
@@ -66,7 +67,8 @@ patch -p1 < ../patches/ubuntu-core-initramfs.patch
 apt-get build-dep .
 dpkg-buildpackage -us -uc -nc
 
-dpkg -i ../ubuntu-core-initramfs_51_riscv64.deb
+cd ../
+dpkg -i ubuntu-core-initramfs_51_riscv64.deb
 
 cd uc-initrd/
 snapcraft --destructive-mode --target-arch=riscv64 --enable-experimental-target-arch
