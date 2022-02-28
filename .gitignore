@@ -1,0 +1,13 @@
+# Build artifacts
+*/parts
+*/stage
+*/prime
+*/*.snap
+
+# Crafty things
+*.model
+*.img
+*.manifest
+bb
+bi
+build
