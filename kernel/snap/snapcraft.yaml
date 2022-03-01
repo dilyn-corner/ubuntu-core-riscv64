@@ -19,9 +19,9 @@ parts:
     plugin: x-kernel
     source: git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/focal
     source-type: git
-    source-branch: hwe-5.15
+    source-branch: hwe-5.13
     source-depth: 1
-    kernel-compiler: riscv64-linux-gnu-gcc-10
+    kernel-compiler: riscv64-linux-gnu-gcc-11
     kernel-with-firmware: false
     kernel-image-target: Image
     #kernel-device-trees:
@@ -37,14 +37,14 @@ parts:
       - CONFIG_DRM=n
       - CONFIG_MEDIA_SUPPORT=n
     override-build: |
-      mkdir -p ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/config/riscv64/
-      touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/config/riscv64/config.common.riscv64
-      touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/config/riscv64/config.flavour.generic
+      mkdir -p ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/config/riscv64/
+      touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/config/riscv64/config.common.riscv64
+      touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/config/riscv64/config.flavour.generic
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/config ${SNAPCRAFT_PART_BUILD}/.config
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-stable_riscv64.snap ${SNAPCRAFT_PART_BUILD}/
 
       snapcraftctl build
-      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.15/changelog -S version)
+      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/changelog -S version)
       mkdir -p ${SNAPCRAFT_PART_INSTALL}/dtbs
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb ${SNAPCRAFT_PART_INSTALL}/dtbs/
       mkimage -f ${SNAPCRAFT_PROJECT_DIR}/sources/fitImage.its ${SNAPCRAFT_PART_INSTALL}/fitImage
@@ -81,6 +81,6 @@ build-packages:
   - libelf-dev
   - u-boot-tools
   - on amd64:
-    - gcc-10-riscv64-linux-gnu
+    - gcc-11-riscv64-linux-gnu
   - else:
     - gcc
