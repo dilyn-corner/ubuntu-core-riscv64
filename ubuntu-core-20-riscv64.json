@@ -11,15 +11,11 @@
     "snaps": [
         {
             "name": "virt",
-            "type": "gadget",
-            "default-channel": "20/stable",
-            "id": "UqFziVZDHLSyO3TqSWgNBoAdHbLI4dAH"
+            "type": "gadget"
         },
         {
             "name": "riscv64-virt-kernel",
-            "type": "kernel",
-            "default-channel": "20/stable",
-            "id": "pYVQrBcKmBa0mZ4CCN7ExT6jH8rY1hza"
+            "type": "kernel"
         },
         {
             "name": "core20",
