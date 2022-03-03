@@ -11,7 +11,7 @@ Ubuntu, you might not need to do this. For instance, dracut-core 051 is
 available on Impish, so you don't need to install it here - just do so in the
 usual way.
 
-`systemd-bootchart` is not built for RISC-V because upstream has abandonned the
+`systemd-bootchart` is not built for RISC-V because upstream has abandoned the
 project (seems like). If it had kept up with `systemd`, we probably wouldn't
 have to build it ourselves. But here we are.
 
@@ -43,8 +43,10 @@ these packages. In such a case, you can follow these more generic instructions
 to get newer version of these packages (with small tweaks as necessary, left as
 an exercise for the builder).
 
+Would recommend doing all of this work on the board :)
+
 ```
-Uncomment the deb-src lines in /etc/apt/sources.list and run apt-get update.
+# Uncomment the deb-src lines in /etc/apt/sources.list and run apt-get update.
 
 apt-get build-dep systemd-bootchart # Needed for initrd, not built for riscv64
 apt-get source systemd-bootchart    # Requires a patch! Diverged from upstream.
