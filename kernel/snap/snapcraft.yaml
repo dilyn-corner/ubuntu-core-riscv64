@@ -1,6 +1,6 @@
 name: riscv64-virt-kernel
-summary: A RISCV 64-bit kernel for Qemu's virt board
-description: This is a snapped kernel for an emulated RISCV system.
+summary: A RISC-V 64-bit kernel for Qemu's virt board
+description: This is a snapped kernel for an emulated RISC-V system.
 
 grade: stable
 build-base: core20
@@ -21,7 +21,7 @@ parts:
     source-type: git
     source-branch: hwe-5.13
     source-depth: 1
-    kernel-compiler: riscv64-linux-gnu-gcc-11
+    kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
     kernel-image-target: Image
     #kernel-device-trees:
@@ -81,6 +81,6 @@ build-packages:
   - libelf-dev
   - u-boot-tools
   - on amd64:
-    - gcc-11-riscv64-linux-gnu
+    - gcc-riscv64-linux-gnu
   - else:
     - gcc
