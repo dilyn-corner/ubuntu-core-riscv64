@@ -5,12 +5,14 @@ the initrd for Ubuntu Core. The kernel can be very device specific. Be sure to
 modify the `snap/snapcraft.yaml` for the proper source, config, and device tree
 files for your particular device.
 
-This specific kernel is built with Qemu's RISC-V virt machine. No device tree is
+This specific kernel is built for Qemu's RISC-V virt machine. No device tree is
 required for this machine; Qemu loads it into the machine's memory for us.
 
-*** Ensure you use at least Ubuntu Kernel version 5.11.0! ***
+Later kernel will provide better RISC-V support; I would recommend at least
+5.11, but any RISC-V supporting kernel should work well enough.
 
 Building:
+
 `snapcraft --destructive-mode --target-arch=riscv64 --enable-experimental-target-arch`
 
 ## For Beginners
@@ -18,7 +20,7 @@ Building:
 Building a kernel for the first time is no easy task. There isn't a very good
 resource for what any given kernel option really entails. Your best bet is to
 check out the help text for any given symbol and check the code. Ultimately,
-starting with a defconfig is the best way to start. 
+starting with a defconfig is the best way to start (check arch/riscv/configs).
 
 Slimming down the number of builtins and modules is good for (mostly) one thing:
 faster kernel builds. You won't generally see much in terms of performance

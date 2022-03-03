@@ -50,7 +50,9 @@ created Ubuntu Core image as a ROOTFS by simply doing:
 
 Drop `kernel/sources/config` and use `kconfig` in `snapcraft.yaml`
     * Potentially just minify the `config` to make kernel builds faster...
+
 Boot on real hardware (boards arriving in the next month!)
+
 Explore u-boot in SPL mode
 
 
@@ -71,7 +73,7 @@ qemu-system-riscv64 \
 We use Qemu's virt board out of simplicity -- other boards should also be
 usable, simply modify the kernel and u-boot configs to match.
 
-We add in a a bios line pointing at our payload for two reasons. First, we need
+We add in a bios line pointing at our payload for two reasons. First, we need
 this low-level bit to start everything moving. Second, if a bios file is not
 explicitly specified, Qemu will automatically use a predefined one. This one
 will, of course, not be using our u-boot, and we won't boot into UC :)
