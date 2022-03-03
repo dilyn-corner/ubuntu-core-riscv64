@@ -71,6 +71,11 @@ qemu-system-riscv64 \
 We use Qemu's virt board out of simplicity -- other boards should also be
 usable, simply modify the kernel and u-boot configs to match.
 
+We add in a a bios line pointing at our payload for two reasons. First, we need
+this low-level bit to start everything moving. Second, if a bios file is not
+explicitly specified, Qemu will automatically use a predefined one. This one
+will, of course, not be using our u-boot, and we won't boot into UC :)
+
 We use a virtio device as the drive (booting from SD is not supported on the
 virt machine). This is important to consider for things like having VIRTIO_FS
 built into the kernel, as `modprobe` is not part of `busybox` in the initrd.
