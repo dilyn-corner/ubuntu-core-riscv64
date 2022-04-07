@@ -41,7 +41,7 @@ parts:
       touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/config/riscv64/config.common.riscv64
       touch ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/config/riscv64/config.flavour.generic
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/config ${SNAPCRAFT_PART_BUILD}/.config
-      cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-5.13.0-1012_riscv64.snap ${SNAPCRAFT_PART_BUILD}/
+      cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-5.13.0-1012_riscv64.snap ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
       snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.hwe-5.13/changelog -S version)
