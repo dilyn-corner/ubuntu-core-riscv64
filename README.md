@@ -32,13 +32,14 @@ Specifically, for the model:
 
 ```
 # Make relevant modifications to ubuntu-core-20-riscv64.json if needed
+# Be sure to change authority-id, brand-id
 snapcraft create-key riscy-key
 snapcraft register-key riscy-key
 snap sign -k riscy-key > ubuntu-core-20-riscv64.model < ubuntu-core-20-riscv64.json
 
 ubuntu-image snap ubuntu-core-20-riscv64.model \
     --snap gadget/virt_*_riscv64.snap \
-    --snap riscv64-virt-kernel_*_riscv64.snap
+    --snap kernel/riscv64-virt-kernel_*_riscv64.snap
 ```
 
 From there, you should be able to launch a Qemu virtual machine using the
