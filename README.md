@@ -38,8 +38,8 @@ snapcraft register-key riscy-key
 snap sign -k riscy-key > ubuntu-core-20-riscv64.model < ubuntu-core-20-riscv64.json
 
 ubuntu-image snap ubuntu-core-20-riscv64.model \
-    --snap gadget/virt_*_riscv64.snap \
-    --snap kernel/riscv64-virt-kernel_*_riscv64.snap
+    --snap gadget/*.snap \
+    --snap kernel/*.snap
 ```
 
 From there, you should be able to launch a Qemu virtual machine using the
@@ -70,9 +70,6 @@ qemu-system-riscv64 \
     -device virtio-net-device,netdev=usernet \
     -netdev user,id=usernet,hostfwd=tcp::22222-:22
 ```
-
-We use Qemu's virt board out of simplicity -- other boards should also be
-usable, simply modify the kernel and u-boot configs to match.
 
 We add in a bios line pointing at our payload for two reasons. First, we need
 this low-level bit to start everything moving. Second, if a bios file is not
@@ -105,7 +102,7 @@ Port forwarding for SSH access.
             "type": "gadget"
         },
         {
-            "name": "riscv64-virt-kernel",
+            "name": "virt-kernel",
             "type": "kernel"
         },
         {

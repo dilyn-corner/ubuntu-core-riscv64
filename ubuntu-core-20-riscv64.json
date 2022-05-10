@@ -3,7 +3,7 @@
     "series": "16",
     "authority-id": "cHcxHFRxgHBseRyUpLXtu6amXHgPyFQc",
     "brand-id": "cHcxHFRxgHBseRyUpLXtu6amXHgPyFQc",
-    "model": "ubuntu-core-20-riscv64",
+    "model": "qemu-virt",
     "architecture": "riscv64",
     "timestamp": "2022-02-18T21:50:41+00:00",
     "base": "core20",
@@ -14,7 +14,7 @@
             "type": "gadget"
         },
         {
-            "name": "riscv64-virt-kernel",
+            "name": "virt-kernel",
             "type": "kernel"
         },
         {
