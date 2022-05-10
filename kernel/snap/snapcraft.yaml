@@ -1,6 +1,6 @@
 name: sipeed-lichee-rv-kernel
-summary: A RISC-V 64-bit kernel for Sipeed's Lichee D1 board + dock
-description: A RISC-V 64-bit kernel for Sipeed's Lichee D1 board + dock
+summary: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
+description: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
 
 grade: stable
 build-base: core20
@@ -15,48 +15,40 @@ architectures:
 parts:
   kernel:
     plugin: x-kernel
-    source: ksrc/
+    source: https://github.com/smaeul/linux.git
+    source-branch: riscv/d1-wip
+    source-depth: 1
     kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
     kernel-image-target: Image
-    kernel-device-trees:
-    - allwinner/sun20i-d1-lichee-rv-dock
     kernel-initrd-channel: stable
     kernel-initrd-compression: gz
-    kconfigflavour: generic
-    kconfigs:
-      - CONFIG_SYSTEM_REVOCATION_KEYS=""
-      - CONFIG_SYSTEM_TRUSTED_KEYS=""
-      - CONFIG_DEBUG_INFO_BTF=n
-      - CONFIG_SOUND=n
-      - CONFIG_DRM=n
-      - CONFIG_MEDIA_SUPPORT=n
-      - CONFIG_RISCV_SBI_V01=y
-      - ERRATA_THEAD=y
-      - ERRATA_THEAD_PBMT=y
-      - CONFIG_HVC_RISCV_SBI=y
-      - CONFIG_SUN8I_THERMAL=y
-      - CONFIG_SUNXI_WATCHDOG=y
-      - CRYPTO_DEV_SUN8I_CE=y
-      - CRYPTO_DEV_SUN8I_CE_HASH=y
-      - CRYPTO_DEV_SUN8I_CE_PRNG=y
-      - CRYPTO_DEV_SUN8I_CE_TRNG=y
+    kernel-device-trees:
+      - allwinner/sun20i-d1-lichee-rv-dock
+    kdefconfig:
+      - nezha_defconfig
+      - generic.config
+      - containers.config
+      - security.config
+      - snappy.config
+      - systemd.config
+    override-pull: |
+      snapcraftctl pull
+      git apply ${SNAPCRAFT_PROJECT_DIR}/patches/configs.patch
+      git apply ${SNAPCRAFT_PROJECT_DIR}/patches/apparmor-5.18.patch
     override-build: |
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
           ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
-      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.riscv/changelog -S version)
+      snapcraftctl set-version "$(strings vmlinux | grep "Linux version 5"|cut -d ' ' -f 3)"
+    prime:
+      - -config*
+      - -Image-*
+      - -initrd.img-*
+      - -System.map*
 
-      mkimage -f ${SNAPCRAFT_PROJECT_DIR}/sources/fitImage.its ${SNAPCRAFT_PART_INSTALL}/fitImage
-    stage:
-      - fitImage
-      - initrd.img
-      - kernel.img
-      - modules
-      - dtbs/*
-      - -modules/*/build
-      - -modules/*/source
+
   firmware:
     plugin: dump
     source: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git

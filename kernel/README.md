@@ -5,8 +5,7 @@ the initrd for Ubuntu Core. The kernel can be very device specific. Be sure to
 modify the `snap/snapcraft.yaml` for the proper source, config, and device tree
 files for your particular device.
 
-This specific kernel is built for Sipeed's Lichee RV. It is based on the 5.17
-HWE tree release of the Ubuntu kernel and patched from [Samuel
+This specific kernel builds for Sipeed's Lichee RV, using [Samuel
 Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch.
 
 Under heavy development currently.
