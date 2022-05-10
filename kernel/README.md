@@ -5,11 +5,11 @@ the initrd for Ubuntu Core. The kernel can be very device specific. Be sure to
 modify the `snap/snapcraft.yaml` for the proper source, config, and device tree
 files for your particular device.
 
-This specific kernel is built for Qemu's RISC-V virt machine. No device tree is
-required for this machine; Qemu loads it into the machine's memory for us.
+This specific kernel is built for Sipeed's Lichee RV. It is based on the 5.17
+HWE tree release of the Ubuntu kernel and patched from [Samuel
+Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch.
 
-Later kernel will provide better RISC-V support; I would recommend at least
-5.11, but any RISC-V supporting kernel should work well enough.
+Under heavy development currently.
 
 Building:
 
@@ -37,7 +37,6 @@ ideal. Just build things in, and remove things you know you don't need.
 Additionally, the built kernel snap almost crests 500MB. This is almost
 exclusively due to the firmware bundled with the snap. Most of it can probably
 be removed; you only need firmware for hardware which requires it.
-
 
 Finally, you'll need an initrd snap to be squashed up with the kernel thanks to
 the plugins we use for this snap. For now, the usual places from which the

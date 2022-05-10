@@ -20,7 +20,7 @@
         };
         fdt {
             description = "Flattened Device Tree blob";
-            data = /incbin/("../parts/kernel/install/dtbs/riscv64-virt.dtb");
+            data = /incbin/("../parts/kernel/install/dtbs/sun20i-d1-lichee-rv-dock.dtb");
             type = "flat_dt";
             arch = "riscv64";
             compression = "none";
