@@ -1,14 +1,18 @@
 # The Kernel Snap
 
 The kernel snap is a powerful snap. It includes both the kernel image as well as
-the initrd for Ubuntu Core. The kernel can be very device specific. Be sure to
-modify the `snap/snapcraft.yaml` for the proper source, config, and device tree
-files for your particular device.
+the initrd for Ubuntu Core.
 
 This specific kernel builds for Sipeed's Lichee RV, using [Samuel
-Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch.
+Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch. Specifically,
+the device tree for the dock is built. If you are not using the dock, modify as
+appropriate.
 
 Under heavy development currently.
+
+As it stands, this kernel will boot the board on a `debootstrap` built Ubuntu
+rootfs. This indicates that there is a problem with the gadget snap. Without
+access to UART, I cannot debug further. This should be overcome soon(tm).
 
 Building:
 
