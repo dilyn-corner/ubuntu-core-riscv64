@@ -43,8 +43,6 @@ parts:
       snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.riscv/changelog -S version)
       mkdir -p ${SNAPCRAFT_PART_INSTALL}/dtbs
       cp ${SNAPCRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb ${SNAPCRAFT_PART_INSTALL}/dtbs/
-      mkimage -f ${SNAPCRAFT_PROJECT_DIR}/sources/fitImage.its ${SNAPCRAFT_PART_INSTALL}/fitImage
-
     stage:
       - System.map-*
       - config-*
@@ -55,6 +53,7 @@ parts:
       - dtbs/*
       - -modules/*/build
       - -modules/*/source
+
   firmware:
     plugin: dump
     source: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
