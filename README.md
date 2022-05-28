@@ -1,5 +1,7 @@
 # ubuntu-core-riscv64
+
 Provides the tooling for building a UC20 Image on RISCV64.
+
 
 ## This is in no way supported by Canonical.
 
@@ -48,13 +50,14 @@ For the model:
 ```
 # Make relevant modifications to ubuntu-core-20-riscv64.json if needed
 # Be sure to change authority-id, brand-id
-snapcraft create-key riscy-key
+snapcraft create-key   riscy-key
 snapcraft register-key riscy-key
 snap sign -k riscy-key > ubuntu-core-20-riscv64.model < ubuntu-core-20-riscv64.json
 
-ubuntu-image snap ubuntu-core-20-riscv64.model \
+ubuntu-image snap        \
     --snap gadget/*.snap \
-    --snap kernel/*.snap
+    --snap kernel/*.snap \
+    ubuntu-core-20-riscv64.model
 ```
 
 From there, you should be able to launch a Qemu virtual machine using the
@@ -66,10 +69,6 @@ created Ubuntu Core image as a ROOTFS by simply doing:
 
 Drop `kernel/sources/config` and use `kconfig` in `snapcraft.yaml`
     * Potentially just minify the `config` to make kernel builds faster...
-
-Boot on real hardware (boards arriving in the next month!)
-
-Explore u-boot in SPL mode
 
 
 ### Explain Key Files
