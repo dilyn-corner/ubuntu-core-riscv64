@@ -25,6 +25,7 @@ repository to have the submodules be pulled in for you :)
 ### Instructions
 
 The high level instructions for this project are quite simple:
+
 0) [Build a RISC-V 64-bit Ubuntu Core initrd snap](riscv64-components/README.md)
 1) [Build a Kernel Snap using that initrd snap for RISC-V](kernel/README.md)
 2) [Build a Gadget Snap for your particular board](gadget/README.md)
