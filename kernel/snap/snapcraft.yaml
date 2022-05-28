@@ -6,7 +6,7 @@ grade: stable
 build-base: core20
 confinement: strict
 type: kernel
-adopt-info: kernel
+version: 5.18.0-rc4-gf4bce410a6b4
 
 architectures:
   - build-on: [amd64, riscv64]
@@ -16,7 +16,7 @@ parts:
   kernel:
     plugin: x-kernel
     source: https://github.com/smaeul/linux.git
-    source-branch: riscv/d1-wip
+    source-tag: d1-wip-v5.18-rc4
     source-depth: 1
     kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
@@ -32,22 +32,349 @@ parts:
       - security.config
       - snappy.config
       - systemd.config
+    kconfigs:
+      - CONFIG_ARCH_SUNXI=y
+      - CONFIG_AUDIT=y
+      - CONFIG_AUFS_FS=m
+      - CONFIG_AUTOFS4_FS=y
+      - CONFIG_AUTOFS_FS=y
+      - CONFIG_AX88796B_PHY=y
+      - CONFIG_BINFMT_SCRIPT=y
+      - CONFIG_BLK_CGROUP=y
+      - CONFIG_BLK_DEV_BSG=y
+      - CONFIG_BLK_DEV_DM=y
+      - CONFIG_BLK_DEV_INITRD=y
+      - CONFIG_BLK_DEV_LOOP_MIN_COUNT=256
+      - CONFIG_BLK_DEV_LOOP=y
+      - CONFIG_BLK_DEV_RAM_SIZE=65536
+      - CONFIG_BLK_DEV_RAM=y
+      - CONFIG_BLK_DEV_SD=y
+      - CONFIG_BLK_DEV_THROTTLING=y
+      - CONFIG_BRIDGE=m
+      - CONFIG_BRIDGE_NETFILTER=m
+      - CONFIG_BTRFS_FS=m
+      - CONFIG_CC_STACKPROTECTOR_REGULAR=y
+      - CONFIG_CC_STACKPROTECTOR=y
+      - CONFIG_CFG80211=y
+      - CONFIG_CFQ_GROUP_IOSCHED=y
+      - CONFIG_CFS_BANDWIDTH=y
+      - CONFIG_CGROUP_CPUACCT=y
+      - CONFIG_CGROUP_DEBUG=y
+      - CONFIG_CGROUP_DEVICE=y
+      - CONFIG_CGROUP_FREEZER=y
+      - CONFIG_CGROUP_HUGETLB=y
+      - CONFIG_CGROUP_MISC=y
+      - CONFIG_CGROUP_NET_PRIO=y
+      - CONFIG_CGROUP_PERF=y
+      - CONFIG_CGROUP_PIDS=y
+      - CONFIG_CGROUP_RDMA=y
+      - CONFIG_CGROUP_SCHED=y
+      - CONFIG_CGROUPS=y
+      - CONFIG_CHR_DEV_SG=y
+      - CONFIG_CONFIGFS_FS=y
+      - CONFIG_CPUSETS=y
+      - CONFIG_CPU_THERMAL=y
+      - CONFIG_CRASH_DUMP=y
+      - CONFIG_CRYPTO_CCM=y
+      - CONFIG_CRYPTO_CMAC=y
+      - CONFIG_CRYPTO_DEFLATE=y
+      - CONFIG_CRYPTO_DEV_SUN8I_CE_HASH=y
+      - CONFIG_CRYPTO_DEV_SUN8I_CE_PRNG=y
+      - CONFIG_CRYPTO_DEV_SUN8I_CE_TRNG=y
+      - CONFIG_CRYPTO_DEV_SUN8I_CE=y
+      - CONFIG_CRYPTO_GCM=y
+      - CONFIG_CRYPTO_USER_API_AEAD=y
+      - CONFIG_CRYPTO_USER_API_HASH=y
+      - CONFIG_CRYPTO_USER_API_RNG=y
+      - CONFIG_CRYPTO_USER_API_SKCIPHER=y
+      - CONFIG_CRYPTO_XTS=y
+      - CONFIG_CRYPTO_ZSTD=y
+      - CONFIG_DEBUG_ATOMIC_SLEEP=y
+      - CONFIG_DEBUG_FS=y
+      - CONFIG_DEBUG_INFO_BTF=n
+      - CONFIG_DEBUG_RODATA=y
+      - CONFIG_DEBUG_SET_MODULE_RONX=y
+      - CONFIG_DEFAULT_HOSTNAME="licheerv"
+      - CONFIG_DEFAULT_MMAP_MIN_ADDR=32768
+      - CONFIG_DEFAULT_SECURITY_APPARMOR=y
+      - CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+      - CONFIG_DEVTMPFS_MOUNT=y
+      - CONFIG_DEVTMPFS=y
+      - CONFIG_DMADEVICES=y
+      - CONFIG_DMA_SUN6I=y
+      - CONFIG_DM_CRYPT=y
+      - CONFIG_DMIID=y
+      - CONFIG_DM_THIN_PROVISIONING=m
+      - CONFIG_DRM=n
+      - CONFIG_ECRYPT_FS=y
+      - CONFIG_EEPROM_93CX6=y
+      - CONFIG_EFI_PARTITION=y
+      - CONFIG_EFIVAR_FS=y
+      - CONFIG_ENCRYPTED_KEYS=y
+      - CONFIG_EPOLL=y
+      - CONFIG_ERRATA_THEAD_PBMT=y
+      - CONFIG_ERRATA_THEAD=y
+      - CONFIG_EXPERT=y
+      - CONFIG_EXT4_FS_POSIX_ACL=y
+      - CONFIG_EXT4_FS_SECURITY=y
+      - CONFIG_EXT4_FS=y
+      - CONFIG_FAIR_GROUP_SCHED=y
+      - CONFIG_FANOTIFY=y
+      - CONFIG_FHANDLE=y
+      - CONFIG_GPIO_PCF857X=y
+      - CONFIG_GPIO_SYSFS=y
+      - CONFIG_HIGH_RES_TIMERS=y
+      - CONFIG_HVC_RISCV_SBI=y
+      - CONFIG_HWSPINLOCK_SUN6I=y
+      - CONFIG_HWSPINLOCK=y
+      - CONFIG_I2C_CHARDEV=y
+      - CONFIG_I2C_MV64XXX=y
+      - CONFIG_I2C=y
+      - CONFIG_IKCONFIG_PROC=y
+      - CONFIG_IKCONFIG=y
+      - CONFIG_IKHEADERS=y
+      - CONFIG_INET=y
+      - CONFIG_INOTIFY_USER=y
+      - CONFIG_INPUT_EVDEV=y
+      - CONFIG_INPUT_UINPUT=y
+      - CONFIG_IOSCHED_CFQ=y
+      - CONFIG_IPC_NS=y
+      - CONFIG_IP_NF_FILTER=m
+      - CONFIG_IP_NF_TARGET_MASQUERADE=m
+      - CONFIG_IPV6=y
+      - CONFIG_JUMP_LABEL=y
+      - CONFIG_KEYBOARD_GPIO=y
+      - CONFIG_KEYBOARD_SUN4I_LRADC=y
+      - CONFIG_KEYS=y
+      - CONFIG_LEDS_CLASS_MULTICOLOR=y
+      - CONFIG_LEDS_CLASS=y
+      - CONFIG_LEDS_SUN50I_R329=y
+      - CONFIG_LEDS_TRIGGER_ACTIVITY=y
+      - CONFIG_LEDS_TRIGGER_CPU=y
+      - CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+      - CONFIG_LEDS_TRIGGER_MTD=y
+      - CONFIG_LEDS_TRIGGER_NETDEV=y
+      - CONFIG_LEDS_TRIGGER_ONESHOT=y
+      - CONFIG_LEDS_TRIGGER_PANIC=y
+      - CONFIG_LEDS_TRIGGERS=y
+      - CONFIG_LEDS_TRIGGER_TIMER=y
+      - CONFIG_LOCALVERSION=""
+      - CONFIG_LSM_MMAP_MIN_ADDR=0
+      - CONFIG_MAC80211=m
+      - CONFIG_MAC80211=y
+      - CONFIG_MACVLAN=m
+      - CONFIG_MAGIC_SYSRQ=y
+      - CONFIG_MAILBOX=y
+      - CONFIG_MD=y
+      - CONFIG_MEDIA_SUPPORT=n
+      - CONFIG_MEMCG_KMEM=y
+      - CONFIG_MEMCG_SWAP=y
+      - CONFIG_MEMCG=y
+      - CONFIG_MFD_SYSCON=y
+      - CONFIG_MISC_FILESYSTEMS=y
+      - CONFIG_MMC_SUNXI=y
+      - CONFIG_MMC=y
+      - CONFIG_MODULES=y
+      - CONFIG_MT7601U=m
+      - CONFIG_MTD_BLOCK=y
+      - CONFIG_MTD_PARTITIONED_MASTER=y
+      - CONFIG_MTD_SPI_NAND=y
+      - CONFIG_MTD_UBI_BLOCK=y
+      - CONFIG_MTD_UBI_FASTMAP=y
+      - CONFIG_MTD_UBI=y
+      - CONFIG_MTD=y
+      - CONFIG_NAMESPACES=y
+      - CONFIG_NET_CLS_CGROUP=m
+      - CONFIG_NETDEVICES=y
+      - CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
+      - CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
+      - CONFIG_NET_NS=y
+      - CONFIG_NET=y
+      - CONFIG_NEW_LEDS=y
+      - CONFIG_NF_NAT_IPV4=m
+      - CONFIG_NF_NAT=m
+      - CONFIG_NF_NAT_NEEDED=y
+      - CONFIG_NO_HZ_IDLE=y
+      - CONFIG_NOP_USB_XCEIV=y
+      - CONFIG_NVMEM_SUNXI_SID=y
+      - CONFIG_NVRAM=m
+      - CONFIG_OVERLAY_FS=m
+      - CONFIG_OVERLAY_FS_V1=y
+      - CONFIG_PACKET=y
+      - CONFIG_PACKING=y
+      - CONFIG_PCS_XPCS=y
+      - CONFIG_PHYLIB=y
+      - CONFIG_PHY_SUN4I_USB=y
+      - CONFIG_PID_NS=y
+      - CONFIG_PINCTRL=y
+      - CONFIG_PM_ADVANCED_DEBUG=y
+      - CONFIG_PM_AUTOSLEEP=y
+      - CONFIG_PM_DEBUG=y
+      - CONFIG_PM_TEST_SUSPEND=y
+      - CONFIG_PM_WAKELOCKS=y
+      - CONFIG_POSIX_MQUEUE=y
+      - CONFIG_POWER_SUPPLY=y
+      - CONFIG_PREEMPT=y
+      - CONFIG_PRINTK_TIME=y
+      - CONFIG_PROC_FS=y
+      - CONFIG_PWM_SUN8I_V536=y
+      - CONFIG_PWM=y
+      - CONFIG_RAW_DRIVER=m
+      - CONFIG_RD_BZIP2=y
+      - CONFIG_RD_LZMA=y
+      - CONFIG_RD_XZ=y
+      - CONFIG_REALTEK_PHY=y
+      - CONFIG_REGULATOR_FIXED_VOLTAGE=y
+      - CONFIG_REGULATOR_PWM=y
+      - CONFIG_REGULATOR=y
+      - CONFIG_REMOTEPROC_CDEV=y
+      - CONFIG_REMOTEPROC=y
+      - CONFIG_RFKILL_GPIO=m
+      - CONFIG_RFKILL_INPUT=y
+      - CONFIG_RFKILL_REGULATOR=m
+      - CONFIG_RFKILL=y
+      - CONFIG_RISCV_SBI_V01=y
+      - CONFIG_RPMSG_CHAR=y
+      - CONFIG_RPMSG_VIRTIO=y
+      - CONFIG_RTC_CLASS=y
+      - CONFIG_RTC_DRV_CMOS=m
+      - CONFIG_RTC_DRV_SUN6I=y
+      - CONFIG_RT_GROUP_SCHED=m
+      - CONFIG_SCHED_DEBUG=y
+      - CONFIG_SCHEDSTATS=y
+      - CONFIG_SCSI_SCAN_ASYNC=y
+      - CONFIG_SCSI=y
+      - CONFIG_SECCOMP_FILTER=y
+      - CONFIG_SECCOMP=y
+      - CONFIG_SECURITY_APPARMOR=y
+      - CONFIG_SECURITY_SELINUX=y
+      - CONFIG_SECURITY_SMACK=y
+      - CONFIG_SECURITY=y
+      - CONFIG_SECURITY_YAMA=y
+      - CONFIG_SERIAL_8250_CONSOLE=y
+      - CONFIG_SERIAL_8250_DW=y
+      - CONFIG_SERIAL_8250_NR_UARTS=6
+      - CONFIG_SERIAL_8250_RUNTIME_UARTS=6
+      - CONFIG_SERIAL_8250=y
+      - CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+      - CONFIG_SERIAL_OF_PLATFORM=y
+      - CONFIG_SIGNALFD=y
+      - CONFIG_SND_DYNAMIC_MINORS=y
+      - CONFIG_SND_HRTIMER=y
+      - CONFIG_SND_SOC=y
+      - CONFIG_SND_SUN20I_CODEC=y
+      - CONFIG_SND_SUN4I_I2S=y
+      - CONFIG_SND_SUN4I_SPDIF=y
+      - CONFIG_SND_USB_AUDIO=y
+      - CONFIG_SND=y
+      - CONFIG_SOUND=n
+      - CONFIG_SOUND=y
+      - CONFIG_SPI_SPIDEV=y
+      - CONFIG_SPI_SUN6I=y
+      - CONFIG_SPI=y
+      - CONFIG_SQUASHFS_DECOMP_SINGLE=y
+      - CONFIG_SQUASHFS_FILE_DIRECT=y
+      - CONFIG_SQUASHFS_LZ4=y
+      - CONFIG_SQUASHFS_LZO=y
+      - CONFIG_SQUASHFS_XATTR=y
+      - CONFIG_SQUASHFS_XZ=y
+      - CONFIG_SQUASHFS=y
+      - CONFIG_SQUASHFS_ZLIB=y
+      - CONFIG_STACKTRACE=y
+      - CONFIG_STRICT_DEVMEM=y
+      - CONFIG_SUN50I_IOMMU=y
+      - CONFIG_SUN8I_DE2_CCU=y
+      - CONFIG_SUN8I_DSP_REMOTEPROC=y
+      - CONFIG_SUN8I_THERMAL=y
+      - CONFIG_SUNXI_WATCHDOG=y
+      - CONFIG_SYN_COOKIES=y
+      - CONFIG_SYSFS=y
+      - CONFIG_SYSTEM_REVOCATION_KEYS=""
+      - CONFIG_SYSTEM_TRUSTED_KEYS=""
+      - CONFIG_SYSVIPC_SYSCTL=y
+      - CONFIG_SYSVIPC=y
+      - CONFIG_TASK_DELAY_ACCT=y
+      - CONFIG_TASK_IO_ACCOUNTING=y
+      - CONFIG_TASKSTATS=y
+      - CONFIG_TASK_XACCT=y
+      - CONFIG_THERMAL_EMULATION=y
+      - CONFIG_THERMAL_GOV_BANG_BANG=y
+      - CONFIG_THERMAL_GOV_USER_SPACE=y
+      - CONFIG_THERMAL_STATISTICS=y
+      - CONFIG_THERMAL_WRITABLE_TRIPS=y
+      - CONFIG_THERMAL=y
+      - CONFIG_TIMERFD=y
+      - CONFIG_TMPFS_INODE64=y
+      - CONFIG_TMPFS_POSIX_ACL=y
+      - CONFIG_TMPFS_XATTR=y
+      - CONFIG_TMPFS=y
+      - CONFIG_UEVENT_HELPER_PATH=""
+      - CONFIG_UNIX=y
+      - CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+      - CONFIG_USB_DYNAMIC_MINORS=y
+      - CONFIG_USB_EHCI_HCD_PLATFORM=y
+      - CONFIG_USB_EHCI_HCD=y
+      - CONFIG_USB_ETH_EEM=y
+      - CONFIG_USB_ETH=y
+      - CONFIG_USB_GADGET=y
+      - CONFIG_USB_MUSB_HDRC=y
+      - CONFIG_USB_MUSB_SUNXI=y
+      - CONFIG_USB_OHCI_HCD_PLATFORM=y
+      - CONFIG_USB_OHCI_HCD=y
+      - CONFIG_USB_OTG=y
+      - CONFIG_USB_RTL8152=m
+      - CONFIG_USB_SERIAL_CH341=y
+      - CONFIG_USB_SERIAL=y
+      - CONFIG_USB_STORAGE=y
+      - CONFIG_USB_UAS=y
+      - CONFIG_USB_USBNET=y
+      - CONFIG_USB=y
+      - CONFIG_USELIB=y
+      - CONFIG_USER_NS=y
+      - CONFIG_UTS_NS=y
+      - CONFIG_VETH=m
+      - CONFIG_VMLINUX_MAP=y
+      - CONFIG_VXLAN=m
+      - CONFIG_WATCHDOG_SYSFS=y
+      - CONFIG_WATCHDOG=y
+      - CONFIG_WATCH_QUEUE=y
+      - CONFIG_WLAN=y
+      - CONFIG_ZRAM=y
+      - CONFIG_ZSMALLOC=y
     override-pull: |
       snapcraftctl pull
-      git apply ${SNAPCRAFT_PROJECT_DIR}/patches/configs.patch
       git apply ${SNAPCRAFT_PROJECT_DIR}/patches/apparmor-5.18.patch
     override-build: |
-      cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
+      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
           ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
-      snapcraftctl set-version "$(strings vmlinux | grep "Linux version 5"|cut -d ' ' -f 3)"
     prime:
       - -config*
       - -Image-*
       - -initrd.img-*
       - -System.map*
 
+  rtl823ds:
+    after:
+      - kernel
+    plugin: make
+    source: https://github.com/lwfinger/rtl8723ds.git
+    override-build: |
+      make -j$(nproc) \
+        ARCH=riscv \
+        CROSS_COMPILE=riscv64-linux-gnu- \
+        KSRC=${SNAPCRAFT_PART_SRC}/../../kernel/build \
+        modules
+
+        cp -f 8723ds.ko ${SNAPCRAFT_PART_INSTALL}/
+    override-prime: |
+      snapcraftctl prime
+      depmod -a -b . 5.18.0-rc4-gf4bce410a6b4-dirty
+    organize:
+      8723ds.ko: modules/5.18.0-rc4-gf4bce410a6b4-dirty/kernel/net/wireless/8723ds.ko
+    build-packages:
+      - kmod
 
   firmware:
     plugin: dump
