@@ -10,13 +10,10 @@ appropriate.
 
 Under heavy development currently.
 
-As it stands, this kernel will boot the board on a `debootstrap` built Ubuntu
-rootfs. This indicates that there is a problem with the gadget snap. Without
-access to UART, I cannot debug further. This should be overcome soon(tm).
-
 Building:
 
 `snapcraft --destructive-mode --target-arch=riscv64 --enable-experimental-target-arch`
+
 
 ## For Beginners
 
