@@ -19,20 +19,37 @@ This repository is segmented into several major pieces:
 | riscv64-components | Bits required to build Initrd Snap |
 
 I would recommend doing a recursive clone (`git clone --recursive`) of this
-repository to have the submodules be pulled in for you :)
+repository to have the submodules be pulled in for you. If you forget to
+clone recursively, you can fix that after the fact with:
+```
+$ git submodule update --init --recursive
+```
 
 
+### Installing QEMU for riscv64
+
+For what follows, you'll need to install the `qemu-system-riscv64`
+executable, which is part of the `qemu-system-misc` .deb package:
+
+```
+$ sudo apt install qemu-system-misc
+```
 ### Instructions
 
 **Note**: a premade Ubuntu Core 20 image is available for download from
 [here](https://github.com/dilyn-corner/ubuntu-core-riscv64/releases/tag/qemu-test-image)!
 Download the compressed image and the `fw_payload.elf` binary, decompress the
 image, modify `qemu-run` or move `fw_payload.elf` to the correct location, and
-it should Just Work.
+it should Just Work. Once the image has been booted, you can log into it from
+a different terminal session with:
+```
+$ ssh <SSO name>@localhost -p 22222
+```
 
 If you would rather build everything yourself...
 
-The high level instructions for this project are quite simple:
+The high-level instructions for this project are quite simple:
+
 0) [Build a RISC-V 64-bit Ubuntu Core initrd snap](riscv64-components/README.md)
 1) [Build a Kernel Snap using that initrd snap for RISC-V](kernel/README.md)
 2) [Build a Gadget Snap for your particular board](gadget/README.md)
