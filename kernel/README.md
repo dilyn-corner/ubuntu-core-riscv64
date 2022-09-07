@@ -3,12 +3,21 @@
 The kernel snap is a powerful snap. It includes both the kernel image as well as
 the initrd for Ubuntu Core.
 
-This specific kernel builds for Sipeed's Lichee RV, using [Samuel
-Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch. Specifically,
-the device tree for the dock is built. If you are not using the dock, modify as
-appropriate.
+This specific kernel builds for [Microchip's Polarfire SoC Icicle
+Kit](https://github.com/linux4microchip/linux).
 
-Under heavy development currently.
+More specifically, this kernel builds from based on the [Ubuntu RISC-V Jammy
+kernel](https://git.launchpad.net/~dilyn-corner/ubuntu/+source/linux-riscv/+git/jammy?h=icicle), with patches plucked from the Microchip kernel and applied to the Ubuntu kernel.
+
+Because `snapcraft 7` does not support user-defined plugins when using a Core22
+base, we will make use of `snapcraft 6` and define `base: core20`. This
+shouldn't result in any issues with userspace, and the only potential problem is
+with `snapd-bootstrap` during first-boot. Luckily, there were no real changes
+between Core20 and Core22's implementation of `snapd-bootstrap`, and so we can
+"get away" with this abnormal deviation.
+
+The initrd snap was rebuilt from a Focal rootfs running natively on this
+hardware using the kernel and modules built for this snap.
 
 Building:
 

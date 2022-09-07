@@ -1,0 +1,63 @@
+/*
+ * U-Boot uImage source file for the Polarfire SoC Icicle
+ */
+
+/dts-v1/;
+  
+/ {
+	description = "Ubuntu Core kernel, ramdisk, and FDT blob for Microchip's Polarfire SoC Icicle";
+	#address-cells = <1>;
+  
+	images {
+		kernel {
+			description = "Ubuntu Kernel";
+			data = /incbin/("Image");
+			type = "kernel";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x00000010 0x00200000>;
+			entry = <0x00000010 0x00200000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+		ramdisk {
+			description = "Ubuntu Core ramdisk";
+			data = /incbin/("initrd.img");
+			type = "ramdisk";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x00000010 0x00300000>;
+			entry = <0x00000010 0x00300000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+		fdt-mpfs-icicle-kit.dtb {
+			description = "Polarfire SoC Icicle DTB";
+			data = /incbin/("dtbs/mpfs-icicle-kit.dtb");
+			type = "flat_dt";
+			arch = "riscv";
+			compression = "none";
+			load =  <0x00000010 0x02200000>;
+			entry = <0x00000010 0x02200000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+	configurations {
+	default = "mpfs-icicle-kit.dtb";
+		mpfs-icicle-kit.dtb {
+			description = "Polarfire SoC Icicle";
+			kernel = "kernel";
+			ramdisk = "ramdisk";
+			fdt = "fdt-mpfs-icicle-kit.dtb";
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+};

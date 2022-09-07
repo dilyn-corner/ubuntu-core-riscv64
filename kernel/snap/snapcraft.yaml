@@ -1,159 +1,102 @@
-name: sipeed-lichee-rv-kernel
-summary: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
-description: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
+name: polarfire-kernel
+summary: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
+description: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
 
 grade: stable
+# TODO: evading user-defined plugin issues by choosing a different base
+# This should not impact anything related to Ubuntu Core 22;
+# the only "user-space" difference is the initrd, and snapd-bootstrap did not
+# change between Core20 and Core22.
 build-base: core20
 confinement: strict
 type: kernel
-version: 5.17.9
+version: 5.15-mchp
 
 architectures:
   - build-on: [amd64, riscv64]
     run-on:   [riscv64]
 
 parts:
-  kernel:
-    plugin: x-kernel
-    source: git://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-riscv/+git/jammy
-    source-tag: nezha-5.17-next
+  firmware:
+    plugin: dump
+    source: https://git.launchpad.net/~canonical-kernel-snaps/+git/kernel-snaps-uc22
+    source-type: git
+    source-branch: main
     source-depth: 1
+    stage-packages: [linux-firmware, wireless-regdb]
+    prime:
+      - firmware
+    organize:
+        lib/firmware: firmware
+
+  kernel:
+    after: [firmware]
+    plugin: x-kernel
+    source: https://git.launchpad.net/~dilyn-corner/ubuntu/+source/linux-riscv/+git/jammy
+    source-type: git
+    source-branch: icicle
+    source-depth: 1
+    kdefconfig: [ "snappy_defconfig" ]
     kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
     kernel-image-target: Image
     kernel-initrd-channel: stable
     kernel-initrd-compression: gz
     kernel-device-trees:
-      - allwinner/sun20i-d1-lichee-rv-dock
-    kconfigflavour: "nezha"
+        - microchip/mpfs-icicle-kit
     kconfigs:
-      - CONFIG_DEFAULT_HOSTNAME="Deimos"
-      - CONFIG_SYSTEM_TRUSTED_KEYS=""
       - CONFIG_SYSTEM_REVOCATION_KEYS=""
-      - CONFIG_CFG80211=y
-      - CONFIG_DEBUG_INFO=n
+      - CONFIG_SYSTEM_TRUSTED_KEYS=""
+      - CONFIG_DEFAULT_HOSTNAME="Hermes"
       - CONFIG_DEBUG_INFO_BTF=n
-      - CONFIG_DRM_AMDGPU=n
-      - CONFIG_DRM_ARCPGU=n
-      - CONFIG_DRM_BOCHS=n
-      - CONFIG_DRM_CIRRUS_QEMU=n
-      - CONFIG_DRM_GM12U320=n
-      - CONFIG_DRM_MGAG200=n
-      - CONFIG_DRM_MXSFB=n
-      - CONFIG_DRM_NOUVEAU=n
-      - CONFIG_DRM_QXL=n
-      - CONFIG_DRM_RADEON=n
-      - CONFIG_DRM_SUN4I=y
-      - CONFIG_DRM_SUN8I_DW_HDMI=y
-      - CONFIG_DRM_SUN8I_MIXER=y
-      - CONFIG_DRM_VKMS=n
-      - CONFIG_EFI=n
-      - CONFIG_MAC80211=y
-      - CONFIG_NLS_ISO8859_1=y
-      - CONFIG_SQUASHFS=y
-    override-pull: |
-      snapcraftctl pull
-      #sed -i '/^CONFIG_DEBUG_INFO_DWARF5/d' debian.nezha/config/annotations
-      touch debian.nezha/config/config.common.ports
+    build-packages:
+      - bison
+      - cpio
+      - device-tree-compiler
+      - dpkg-dev
+      - dwarves
+      - flex
+      - libelf-dev
+      - libfdt-dev
+      - libssl-dev
+      - lz4
+      - pkg-config
+      - u-boot-tools
+      - on amd64:
+        - binutils-riscv64-linux-gnu
+        - gcc-riscv64-linux-gnu
+      - else:
+        - gcc
     override-build: |
-      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
-          ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
+      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.snap ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
-    stage: 
+    stage:
       - -config*
+      - -canonical-*
       - -Image-*
       - -initrd.img-*
-      - -modules
+      - -Makefile*
       - -System.map*
+    # TODO: use a FIT Image
+    #prime:
+      #- -Image
+      #- -dtbs
+      #- -initrd.img
+    override-prime: |
+      snapcraftctl prime
+      ${SNAPCRAFT_STAGE}/trim-firmware ${SNAPCRAFT_PRIME}
+    # TODO: use a FIT Image
+    #organize:
+    #  kernel.img: Image
 
-  wlan-driver:
-    after: [kernel]
-    plugin: nil
-    source: git@github.com:lwfinger/rtl8723ds.git
-    override-build: |
-      KVER=$(ls ${SNAPCRAFT_PROJECT_DIR}/parts/kernel/install/modules/ | cut -f1 -d/)
-      make CROSS_COMPILE=riscv64-linux-gnu- \
-        KSRC="${SNAPCRAFT_PROJECT_DIR}/parts/kernel/build" \
-        ARCH=riscv KVER=${KVER}
-      cp ${SNAPCRAFT_PART_BUILD}/8723ds.ko ${SNAPCRAFT_PART_INSTALL}/
-    stage:
-      - -modules
-
-  depmod:
-    plugin: nil
-    after: [kernel, wlan-driver]
-    override-build: |
-      KVER=$(ls ${SNAPCRAFT_PROJECT_DIR}/parts/kernel/install/modules/ | cut -f1 -d/)
-      # Collect all kernel and separately built modules
-      cp -rf ${SNAPCRAFT_PROJECT_DIR}/parts/kernel/install/modules \
-        ${SNAPCRAFT_PART_INSTALL}/
-      cp -rf ${SNAPCRAFT_PROJECT_DIR}/parts/wlan-driver/install/8723ds.ko \
-        ${SNAPCRAFT_PART_INSTALL}/modules/${KVER}/
-      ln -rsf ${SNAPCRAFT_PART_INSTALL} ${SNAPCRAFT_PART_INSTALL}/lib
-      depmod -b ${SNAPCRAFT_PART_INSTALL} ${KVER}
-    stage:
-      - modules
-
-  firmware:
-    source: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-    source-type: git
-    source-branch: main
-    source-depth: 1
-    plugin: nil
-    stage:
-      - -firmware/amd
-      - -firmware/amdgpu
-      - -firmware/asihpi
-      - -firmware/cavium
-      - -firmware/cxgb3
-      - -firmware/cxgb4
-      - -firmware/dpaa2
-      - -firmware/i915
-      - -firmware/intel
-      - -firmware/iwlwifi-*
-      - -firmware/liquidio
-      - -firmware/matrox
-      - -firmware/mediatek
-      - -firmware/mellanox
-      - -firmware/mrvl
-      - -firmware/moxa
-      - -firmware/netronome
-      - -firmware/nvidia
-      - -firmware/qed
-      - -firmware/radeon
-      - -firmware/rockchip
-      - -firmware/ath10k/QCA9377/hw1.0/firmware-5.bin
-      - -firmware/ath3k-1.fw
-      - -firmware/qca/htbtfw20.tlv
-      - -firmware/qcom
-      - -firmware/s5p*
-      - -usr
-      - -lib
-    organize:
-      'lib/firmware': firmware/
-
-  wlan-firmware:
-    plugin: dump
-    source: git@github.com:armbian/firmware.git
-    organize:
-      "*": firmware/
-    stage:
-      - firmware/rtl_bt/rtl8723ds_*.bin
-
-build-packages:
-  - bison
-  - cpio
-  - device-tree-compiler
-  - dpkg-dev
-  - flex
-  - libelf-dev
-  - libfdt-dev
-  - libssl-dev
-  - pkg-config
-  - u-boot-tools
-  - on amd64:
-    - binutils-riscv64-linux-gnu
-    - gcc-riscv64-linux-gnu
-  - else:
-    - gcc
+  # TODO: use a FIT Image
+  #fit-image:
+  #  after: [kernel]
+  #  source: .
+  #  plugin: nil
+  #  override-build: |
+  #    cp -f ${SNAPCRAFT_PROJECT_DIR}/fitImage-riscv64.its ${SNAPCRAFT_STAGE}
+  #    mkimage \
+  #      -f ${SNAPCRAFT_STAGE}/fitImage-riscv64.its \
+  #      ${SNAPCRAFT_PRIME}/kernel.img
