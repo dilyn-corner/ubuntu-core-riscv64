@@ -4,6 +4,9 @@
 */prime
 */*.snap
 
+# Toolchains...
+gadget/SoftConsole*
+
 # Crafty things
 *.model
 *.img
