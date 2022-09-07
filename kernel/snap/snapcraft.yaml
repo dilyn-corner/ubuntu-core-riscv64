@@ -1,20 +1,19 @@
 name: polarfire-kernel
+version: 5.15-mchp
 summary: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
 description: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
-
-grade: stable
+type: kernel
 # TODO: evading user-defined plugin issues by choosing a different base
 # This should not impact anything related to Ubuntu Core 22;
 # the only "user-space" difference is the initrd, and snapd-bootstrap did not
 # change between Core20 and Core22.
 build-base: core20
-confinement: strict
-type: kernel
-version: 5.15-mchp
-
 architectures:
   - build-on: [amd64, riscv64]
     run-on:   [riscv64]
+
+grade: stable
+confinement: strict
 
 parts:
   firmware:
