@@ -77,25 +77,25 @@ parts:
       - -initrd.img-*
       - -Makefile*
       - -System.map*
-    # TODO: use a FIT Image
-    #prime:
-      #- -Image
-      #- -dtbs
-      #- -initrd.img
+    prime:
+      - -Image
+      - -dtbs
+      - -initrd.img
     override-prime: |
       snapcraftctl prime
       ${SNAPCRAFT_STAGE}/trim-firmware ${SNAPCRAFT_PRIME}
-    # TODO: use a FIT Image
-    #organize:
-    #  kernel.img: Image
+    organize:
+      kernel.img: Image
 
-  # TODO: use a FIT Image
-  #fit-image:
-  #  after: [kernel]
-  #  source: .
-  #  plugin: nil
-  #  override-build: |
-  #    cp -f ${SNAPCRAFT_PROJECT_DIR}/fitImage-riscv64.its ${SNAPCRAFT_STAGE}
-  #    mkimage \
-  #      -f ${SNAPCRAFT_STAGE}/fitImage-riscv64.its \
-  #      ${SNAPCRAFT_PRIME}/kernel.img
+  fit-image:
+    after: [kernel]
+    source: sources/
+    plugin: dump
+    override-stage: |
+      snapcraftctl stage
+
+      mkimage \
+        -f ${SNAPCRAFT_STAGE}/fitImage-riscv64.its \
+        ${SNAPCRAFT_PRIME}/kernel.img
+    prime:
+       - -fitImage-riscv64.its
