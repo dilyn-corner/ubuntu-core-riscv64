@@ -6,11 +6,11 @@
     "model": "sipeed-lichee-rv",
     "architecture": "riscv64",
     "timestamp": "2022-02-18T21:50:41+00:00",
-    "base": "core20",
+    "base": "core22",
     "grade": "dangerous",
     "snaps": [
         {
-            "name": "sipeed-lichee-rv-gadget",
+            "name": "sipeed-lichee-rv",
             "type": "gadget"
         },
         {
@@ -18,15 +18,15 @@
             "type": "kernel"
         },
         {
-            "name": "core20",
+            "name": "core22",
             "type": "base",
-            "default-channel": "latest/edge",
-            "id": "DLqre5XGLbDqg9jPtiAhRRjDuPVa5X1q"
+            "default-channel": "latest/stable",
+            "id": "amcUKQILKXHHTlmSa7NMdnXSx02dNeeT"
         },
         {
             "name": "snapd",
             "type": "snapd",
-            "default-channel": "latest/edge",
+            "default-channel": "latest/stable",
             "id": "PMrrV4ml8uWuEUDBT8dSGnKUYbevVhc4"
         }
     ]

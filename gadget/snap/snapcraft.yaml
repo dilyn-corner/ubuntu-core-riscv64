@@ -1,14 +1,14 @@
-name: sipeed-lichee-rv-gadget
-version: 20-1
+name: sipeed-lichee-rv
+version: 22-1
 summary: Sipeed Lichee RV gadget
 description: |
   Support files for booting Sipeed Lichee RV gadget
 type: gadget
-base: core20
+base: core22
 assumes: [kernel-assets]
 architectures:
-  - build-on: [amd64, riscv64]
-    run-on:   [riscv64]
+  - build-on:  [amd64, riscv64]
+    build-for: [riscv64]
 
 confinement: strict
 grade: stable
@@ -19,15 +19,15 @@ parts:
   boot-scr:
     plugin: nil
     source: u-boot
+    build-packages:
+      - u-boot-tools
     override-build: |
       mkimage \
         -T script \
         -C none \
         -n 'Boot Script' \
         -d boot.scr.in \
-        ${SNAPCRAFT_PART_INSTALL}/boot.scr
-    build-packages:
-      - u-boot-tools
+        ${CRAFT_PART_INSTALL}/boot.scr
 
   spl:
     plugin: nil
@@ -35,14 +35,20 @@ parts:
     source-type: git
     source-branch: mainline
     source-depth: 1
+    build-packages:
+      - build-essential
+      - on amd64:
+        - gcc-riscv64-linux-gnu
+      - else:
+        - gcc
     override-build: |
       make \
         CROSS_COMPILE=riscv64-linux-gnu- \
         p=sun20iw1p1 \
         mmc
 
-      cp -f ${SNAPCRAFT_PART_BUILD}/nboot/boot0_sdcard_sun20iw1p1.bin \
-        ${SNAPCRAFT_PART_INSTALL}/
+      cp -f ${CRAFT_PART_BUILD}/nboot/boot0_sdcard_sun20iw1p1.bin \
+        ${CRAFT_PART_INSTALL}/
 
   opensbi:
     plugin: make
@@ -58,24 +64,33 @@ parts:
         make
 
   u-boot:
-    after:
-      - opensbi
+    after: [opensbi]
     plugin: make
     source: https://github.com/smaeul/u-boot.git
     source-type: git
     source-branch: d1-wip
     source-depth: 1
+    build-packages:
+      - build-essential
+      - libpython3-dev
+      - libssl-dev
+      - python3-distutils
+      - swig
+      - on amd64:
+        - gcc-riscv64-linux-gnu
+      - else:
+        - gcc
     override-build: |
       make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- lichee_rv_defconfig
 
-      sed -i 's/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv"/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv-dock"/' ${SNAPCRAFT_PART_BUILD}/.config
-      sed -i 's/# CONFIG_OF_LIBFDT_OVERLAY is not set/CONFIG_OF_LIBFDT_OVERLAY=y/' ${SNAPCRAFT_PART_BUILD}/.config
+      sed -i 's/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv"/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv-dock"/' .config
+      sed -i 's/# CONFIG_OF_LIBFDT_OVERLAY is not set/CONFIG_OF_LIBFDT_OVERLAY=y/' .config
 
 
       make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- all
 
       cp -f arch/riscv/dts/sun20i-d1-lichee-rv-dock.dtb .
-      cp -f ${SNAPCRAFT_PART_SRC}/../../opensbi/build/build/platform/generic/firmware/fw_dynamic.bin .
+      cp -f ${CRAFT_PART_SRC}/../../opensbi/build/build/platform/generic/firmware/fw_dynamic.bin .
 
       tools/mkenvimage \
         -r -s 4096 \
@@ -83,23 +98,11 @@ parts:
 
       tools/mkimage \
         -T sunxi_toc1 \
-        -d ${SNAPCRAFT_PROJECT_DIR}/u-boot/toc1.cfg \
-        ${SNAPCRAFT_PART_INSTALL}/u-boot.toc1
+        -d ${CRAFT_PROJECT_DIR}/u-boot/toc1.cfg \
+        ${CRAFT_PART_INSTALL}/u-boot.toc1
 
-      touch ${SNAPCRAFT_PART_INSTALL}/uboot.conf
+      touch ${CRAFT_PART_INSTALL}/uboot.conf
     prime:
       - u-boot.toc1
       - boot.sel
       - uboot.conf
-    build-packages:
-      - libpython3-dev
-      - libssl-dev
-      - python3-distutils
-      - swig
-
-build-packages:
-  - build-essential
-  - on amd64:
-    - gcc-riscv64-linux-gnu
-  - else:
-    - gcc

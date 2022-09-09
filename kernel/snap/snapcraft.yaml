@@ -1,12 +1,16 @@
 name: sipeed-lichee-rv-kernel
+version: 5.17.9
+# TODO: evading user-defined plugin issues by choosing a different base
+# This should not impact anything related to Ubuntu Core 22;
+# the only "user-space" difference is the initrd, and snapd-bootstrap did not
+# change between Core20 and Core22.
+build-base: core20
 summary: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
 description: A RISC-V 64-bit kernel for Sipeed's Lichee RV board + dock
-
-grade: stable
-build-base: core20
-confinement: strict
 type: kernel
-version: 5.17.9
+
+confinement: strict
+grade: stable
 
 architectures:
   - build-on: [amd64, riscv64]
@@ -53,7 +57,6 @@ parts:
       - CONFIG_SQUASHFS=y
     override-pull: |
       snapcraftctl pull
-      #sed -i '/^CONFIG_DEBUG_INFO_DWARF5/d' debian.nezha/config/annotations
       touch debian.nezha/config/config.common.ports
     override-build: |
       cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
@@ -69,8 +72,9 @@ parts:
 
   wlan-driver:
     after: [kernel]
-    plugin: nil
-    source: git@github.com:lwfinger/rtl8723ds.git
+    plugin: make
+    source: https://github.com/lwfinger/rtl8723ds.git
+    source-depth: 1
     override-build: |
       KVER=$(ls ${SNAPCRAFT_PROJECT_DIR}/parts/kernel/install/modules/ | cut -f1 -d/)
       make CROSS_COMPILE=riscv64-linux-gnu- \
@@ -135,7 +139,8 @@ parts:
 
   wlan-firmware:
     plugin: dump
-    source: git@github.com:armbian/firmware.git
+    source: https://github.com/armbian/firmware.git
+    source-depth: 1
     organize:
       "*": firmware/
     stage:
