@@ -20,7 +20,7 @@ parts:
   kernel:
     plugin: x-kernel
     source: git://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-riscv/+git/jammy
-    source-tag: nezha-5.17-next
+    source-tag: allwinner-5.17-next
     source-depth: 1
     kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
@@ -29,35 +29,26 @@ parts:
     kernel-initrd-compression: gz
     kernel-device-trees:
       - allwinner/sun20i-d1-lichee-rv-dock
-    kconfigflavour: "nezha"
+    kconfigflavour: "allwinner"
     kconfigs:
       - CONFIG_DEFAULT_HOSTNAME="Deimos"
       - CONFIG_SYSTEM_TRUSTED_KEYS=""
       - CONFIG_SYSTEM_REVOCATION_KEYS=""
+      - CONFIG_NLS_ISO8859_1=y
       - CONFIG_CFG80211=y
       - CONFIG_DEBUG_INFO=n
       - CONFIG_DEBUG_INFO_BTF=n
       - CONFIG_DRM_AMDGPU=n
-      - CONFIG_DRM_ARCPGU=n
-      - CONFIG_DRM_BOCHS=n
-      - CONFIG_DRM_CIRRUS_QEMU=n
-      - CONFIG_DRM_GM12U320=n
-      - CONFIG_DRM_MGAG200=n
-      - CONFIG_DRM_MXSFB=n
       - CONFIG_DRM_NOUVEAU=n
-      - CONFIG_DRM_QXL=n
       - CONFIG_DRM_RADEON=n
       - CONFIG_DRM_SUN4I=y
       - CONFIG_DRM_SUN8I_DW_HDMI=y
       - CONFIG_DRM_SUN8I_MIXER=y
-      - CONFIG_DRM_VKMS=n
-      - CONFIG_EFI=n
-      - CONFIG_MAC80211=y
-      - CONFIG_NLS_ISO8859_1=y
-      - CONFIG_SQUASHFS=y
     override-pull: |
       snapcraftctl pull
-      touch debian.nezha/config/config.common.ports
+      # TODO: remove when issue is resolved
+      # https://github.com/kubiko/snapcraft-kernel-plugin/issues/20
+      touch debian.allwinner/config/config.common.ports
     override-build: |
       cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_20-*_riscv64.snap \
           ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
