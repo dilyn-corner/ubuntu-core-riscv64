@@ -1,6 +1,6 @@
 # ubuntu-core-riscv64
 
-Provides the tooling for building a UC20 Image on RISCV64.
+Provides the tooling for building an Ubuntu Core image on RISC-V.
 
 
 ## This is in no way supported by Canonical.
@@ -15,7 +15,6 @@ This repository is segmented into several major pieces:
 | gadget/            | Gadget Snap                        |
 | kernel/            | Kernel Snap                        |
 | \*.json            | Model JSON                         |
-| qemu-run           | Qemu Invocation                    |
 | riscv64-components | Bits required to build Initrd Snap |
 
 I would recommend doing a recursive clone (`git clone --recursive`) of this
@@ -45,27 +44,31 @@ For the model:
 # Be sure to change authority-id, brand-id
 snapcraft create-key   riscy-key
 snapcraft register-key riscy-key
-snap sign -k riscy-key ubuntu-core-20-riscv64.json > ubuntu-core-20-riscv64.model
+snap sign -k riscy-key ubuntu-core-XX-riscv64.json > ubuntu-core-XX-riscv64.model
 
 ubuntu-image snap        \
     --snap gadget/*.snap \
     --snap kernel/*.snap \
-    ubuntu-core-20-riscv64.model
+    ubuntu-core-*-riscv64.model
 ```
 
-Once you have built the Ubuntu Core image, merely write it to an SD card, insert
-the card into the Sipeed Lichee RV, and add power. In order to get output,
-connect to the board via UART. 
-
-**NOTE**: after some testing, I intend on adding a way for HDMI to be the
-default output.
+Once you have built the Ubuntu Core image, put the Icicle kit into upload mode
+and flash the image to the eMMC in your favorite way. This can be done by
+plugging a microUSB cable into both of the ports on the board and pulling up the
+supervisor console using `screen /dev/ttyUSB0 115200`. Boot the board and
+interrupt the boot sequence, then enter `usbdmsc` to make the eMMC available for
+writing on the host machine. Use a tool like `dd` to write the image (`dd
+if=polarfire.img of=/dev/sdX bs=32M status=progress; sync`), use `ctrl+c` in
+`screen` to end the `usbdmsc` command, and execute `boot` to boot into Ubuntu
+Core! `screen /dev/ttyUSB1 115200` should show you the boot process from
+`u-boot` to Linux to Core.
 
 
 ### Future work
 
-Slim the `kconfig` section of the `snapcraft.yaml`, potentially by simply using
-the official Ubuntu kernel.
+TBD.
 
+Some software fixes are required from upstream for a fully functional device.
 
 ```
 {
@@ -73,30 +76,30 @@ the official Ubuntu kernel.
     "series": "16",
     "authority-id": "cHcxHFRxgHBseRyUpLXtu6amXHgPyFQc",
     "brand-id": "cHcxHFRxgHBseRyUpLXtu6amXHgPyFQc",
-    "model": "ubuntu-core-20-riscv64",
+    "model": "polarfire",
     "architecture": "riscv64",
     "timestamp": "2022-02-18T21:50:41+00:00",
-    "base": "core20",
+    "base": "core22",
     "grade": "dangerous",
     "snaps": [
         {
-            "name": "sipeed-lichee-rv-gadget",
+            "name": "polarfire",
             "type": "gadget"
         },
         {
-            "name": "sipeed-lichee-rv-kernel",
+            "name": "polarfire-kernel",
             "type": "kernel"
         },
         {
-            "name": "core20",
+            "name": "core22",
             "type": "base",
-            "default-channel": "latest/edge",
-            "id": "DLqre5XGLbDqg9jPtiAhRRjDuPVa5X1q"
+            "default-channel": "latest/stable",
+            "id": "amcUKQILKXHHTlmSa7NMdnXSx02dNeeT"
         },
         {
             "name": "snapd",
             "type": "snapd",
-            "default-channel": "latest/edge",
+            "default-channel": "latest/stable",
             "id": "PMrrV4ml8uWuEUDBT8dSGnKUYbevVhc4"
         }
     ]
