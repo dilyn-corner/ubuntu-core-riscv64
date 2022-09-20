@@ -1,19 +1,35 @@
 name: virt-kernel
+adopt-info: kernel
+# TODO: evading user-defined plugin issues by choosing a different base
+# This should not impact anything related to Ubuntu Core 22;
+# the only "user-space" difference is the initrd, and snapd-bootstrap did
+# not change between Core20 and Core22.
+build-base: core20
 summary: A RISC-V 64-bit kernel for Qemu's virt board
 description: This is a snapped kernel for an emulated RISC-V system.
-
-grade: stable
-build-base: core20
-confinement: strict
 type: kernel
-adopt-info: kernel
-
 architectures:
   - build-on: [amd64, riscv64]
     run-on:   [riscv64]
 
+grade: stable
+confinement: strict
+
 parts:
+  firmware:
+    plugin: dump
+    source: https://git.launchpad.net/~canonical-kernel-snaps/+git/kernel-snaps-uc22
+    source-type: git
+    source-branch: main
+    source-depth: 1
+    stage-packages: [linux-firmware, wireless-regdb]
+    prime:
+      - firmware
+    organize:
+      'lib/firmware': firmware/
+
   kernel:
+    after: [firmware]
     plugin: x-kernel
     source: git://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-riscv/+git/focal
     source-type: git
@@ -36,46 +52,38 @@ parts:
       - CONFIG_RISCV_SBI_V01=y
       - CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
       - CONFIG_VIRTIO_BLK=y
+    build-packages:
+      - bison
+      - cpio
+      - device-tree-compiler
+      - dpkg-dev
+      - flex
+      - libelf-dev
+      - libfdt-dev
+      - libssl-dev
+      - pkg-config
+      - u-boot-tools
+      - on amd64:
+        - binutils-riscv64-linux-gnu
+        - gcc-riscv64-linux-gnu
+      - else:
+        - gcc
     override-build: |
-      cp ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.snap ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
+      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.snap \
+        ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
       snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.riscv/changelog -S version)
+
       mkdir -p ${SNAPCRAFT_PART_INSTALL}/dtbs
-      cp ${SNAPCRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb ${SNAPCRAFT_PART_INSTALL}/dtbs/
+      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb ${SNAPCRAFT_PART_INSTALL}/dtbs/
     stage:
-      - System.map-*
-      - config-*
-      - fitImage
-      - initrd.img
-      - kernel.img
-      - modules
-      - dtbs/*
+      - -config-*
+      - -Image-*
+      - -initrd.img-*
+      - -System.map-*
       - -modules/*/build
       - -modules/*/source
-
-  firmware:
-    plugin: dump
-    source: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-    source-type: git
-    source-branch: main
-    source-depth: 1
-    organize:
-      '*': firmware/
-
-build-packages:
-  - bison
-  - cpio
-  - device-tree-compiler
-  - dpkg-dev
-  - flex
-  - libelf-dev
-  - libfdt-dev
-  - libssl-dev
-  - pkg-config
-  - u-boot-tools
-  - on amd64:
-    - binutils-riscv64-linux-gnu
-    - gcc-riscv64-linux-gnu
-  - else:
-    - gcc
+    override-prime: |
+      snapcraftctl prime
+      ${SNAPCRAFT_STAGE}/trim-firmware ${SNAPCRAFT_PRIME}
