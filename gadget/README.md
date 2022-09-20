@@ -26,9 +26,9 @@ binary are to be loaded into memory. more importantly, this cfg file also
 components, but only ships a few objects; the relevant early-stage boot files
 are bundled in a single file and written to a nonpartition on the device image.
 
-**NOTE**: this board has an optional dock! This particular branch builds with
-the dock in mind -- if you are using the board without its optional dock, be
-sure to modify the relevant device tree names!
+**NOTE**: this board has an optional dock! This gadget snap is built with the
+dock in mind -- if you are using the board without its optional dock, be sure to
+modify the relevant device tree names!
 
 **NOTE**: while the dock includes an HDMI port, the only way to get output to it
 requires modifying `sysfs`:

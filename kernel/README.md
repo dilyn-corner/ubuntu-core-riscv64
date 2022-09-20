@@ -3,12 +3,11 @@
 The kernel snap is a powerful snap. It includes both the kernel image as well as
 the initrd for Ubuntu Core.
 
-This specific kernel builds for Sipeed's Lichee RV, using [Samuel
-Holland](https://github.com/smaeul/linux)'s riscv/d1-wip branch. Specifically,
-the device tree for the dock is built. If you are not using the dock, modify as
-appropriate.
+Recently, the Ubuntu kernel's RISC-V flavour added support for several boards.
+We are using the allwinner flavour of the [official kernel](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-riscv/+git/jammy).
 
-Under heavy development currently.
+**NOTE**: the kernel snap we build by default includes the device tree for the
+dock. If you are not using the dock, modify the device tree built accordingly.
 
 Building:
 
