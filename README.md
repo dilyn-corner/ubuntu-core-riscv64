@@ -1,6 +1,6 @@
 # ubuntu-core-riscv64
 
-Provides the tooling for building a UC20 Image on RISCV64.
+Provides the tooling for building an Ubuntu Core image on RISC-V.
 
 
 ## This is in no way supported by Canonical.
@@ -69,12 +69,12 @@ For the model:
 # Be sure to change authority-id, brand-id
 snapcraft create-key   riscy-key
 snapcraft register-key riscy-key
-snap sign -k riscy-key > ubuntu-core-20-riscv64.model < ubuntu-core-20-riscv64.json
+snap sign -k riscy-key > ubuntu-core-XX-riscv64.model < ubuntu-core-XX-riscv64.json
 
 ubuntu-image snap        \
     --snap gadget/*.snap \
     --snap kernel/*.snap \
-    ubuntu-core-20-riscv64.model
+    ubuntu-core-*-riscv64.model
 ```
 
 From there, you should be able to launch a Qemu virtual machine using the
@@ -86,6 +86,9 @@ created Ubuntu Core image as a ROOTFS by simply doing:
 
 Drop `kernel/sources/config` and use `kconfig` in `snapcraft.yaml`
     * Potentially just minify the `config` to make kernel builds faster...
+
+`u-boot` builds a device tree for our hardware. Investigate having the gadget
+  provide our device tree.
 
 
 ### Explain Key Files
@@ -125,7 +128,7 @@ Port forwarding for SSH access.
     "model": "ubuntu-core-20-riscv64",
     "architecture": "riscv64",
     "timestamp": "2022-02-18T21:50:41+00:00",
-    "base": "core20",
+    "base": "core22",
     "grade": "dangerous",
     "snaps": [
         {
@@ -139,13 +142,13 @@ Port forwarding for SSH access.
         {
             "name": "core20",
             "type": "base",
-            "default-channel": "latest/edge",
-            "id": "DLqre5XGLbDqg9jPtiAhRRjDuPVa5X1q"
+            "default-channel": "latest/stable",
+            "id": "amcUKQILKXHHTlmSa7NMdnXSx02dNeeT"
         },
         {
             "name": "snapd",
             "type": "snapd",
-            "default-channel": "latest/edge",
+            "default-channel": "latest/stable",
             "id": "PMrrV4ml8uWuEUDBT8dSGnKUYbevVhc4"
         }
     ]
