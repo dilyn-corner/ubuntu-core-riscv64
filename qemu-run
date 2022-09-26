@@ -1,8 +1,18 @@
 #!/bin/sh -e
 
+if [ ! -e /usr/lib/riscv64-linux-gnu/opensbi/generic/fw_jump.elf ]; then
+    echo "Please install the opensbi package"
+    exit 1
+fi
+if [ ! -e /usr/lib/u-boot/qemu-riscv64_smode/uboot.elf ]; then
+    echo "Please install the u-boot-qemu package"
+    exit 1
+fi
+
 qemu-system-riscv64 \
     -M virt -m 2G -smp 1 -nographic \
-    -bios gadget/prime/fw_payload.elf \
+    -bios /usr/lib/riscv64-linux-gnu/opensbi/generic/fw_jump.elf \
+    -kernel /usr/lib/u-boot/qemu-riscv64_smode/uboot.elf \
     -drive file=virt.img,format=raw,if=virtio \
     -object rng-random,filename=/dev/urandom,id=rng0 \
     -device virtio-rng-device,rng=rng0 \
