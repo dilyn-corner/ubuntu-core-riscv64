@@ -1,89 +1,79 @@
 name: virt-kernel
 adopt-info: kernel
-# TODO: evading user-defined plugin issues by choosing a different base
-# This should not impact anything related to Ubuntu Core 22;
-# the only "user-space" difference is the initrd, and snapd-bootstrap did
-# not change between Core20 and Core22.
-build-base: core20
+build-base: core22
 summary: A RISC-V 64-bit kernel for Qemu's virt board
 description: This is a snapped kernel for an emulated RISC-V system.
 type: kernel
 architectures:
-  - build-on: [amd64, riscv64]
-    run-on:   [riscv64]
+  - build-on:  [amd64, riscv64]
+    build-for: [riscv64]
 
 grade: stable
 confinement: strict
 
+package-repositories:
+  - type: apt
+    url: https://ppa.launchpadcontent.net/canonical-kernel-team/ppa/ubuntu
+    suites: [jammy]
+    components: [main]
+    architectures: [riscv64]
+    key-id: 110E21D8B0E2A1F0243AF6820856F197B892ACEA
+    key-server: keyserver.ubuntu.com
+
 parts:
-  firmware:
-    plugin: dump
-    source: https://git.launchpad.net/~canonical-kernel-snaps/+git/kernel-snaps-uc22
-    source-type: git
-    source-branch: main
-    source-depth: 1
-    stage-packages: [linux-firmware, wireless-regdb]
-    prime:
-      - firmware
-    organize:
-      'lib/firmware': firmware/
-
   kernel:
-    after: [firmware]
-    plugin: x-kernel
-    source: git://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-riscv/+git/focal
-    source-type: git
-    source-branch: riscv-5.13
-    source-depth: 1
-    kernel-compiler: riscv64-linux-gnu-gcc
-    kernel-with-firmware: false
-    kernel-image-target: Image
-    kernel-initrd-channel: stable
-    kernel-initrd-compression: gz
-    kconfigflavour: generic
-    kconfigs:
-      - CONFIG_SYSTEM_REVOCATION_KEYS=""
-      - CONFIG_SYSTEM_TRUSTED_KEYS=""
-      - CONFIG_DEBUG_INFO_BTF=n
-      - CONFIG_SOUND=n
-      - CONFIG_DRM=n
-      - CONFIG_MEDIA_SUPPORT=n
-      - CONFIG_NLS_ISO8859_1=y
-      - CONFIG_RISCV_SBI_V01=y
-      - CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-      - CONFIG_VIRTIO_BLK=y
-    build-packages:
-      - bison
-      - cpio
-      - device-tree-compiler
-      - dpkg-dev
-      - flex
-      - libelf-dev
-      - libfdt-dev
-      - libssl-dev
-      - pkg-config
-      - u-boot-tools
-      - on amd64:
-        - binutils-riscv64-linux-gnu
-        - gcc-riscv64-linux-gnu
-      - else:
-        - gcc
-    override-build: |
-      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.snap \
-        ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
+    plugin: nil
+    stage-packages: 
+      - linux-generic:${CRAFT_TARGET_ARCH}
+    override-stage: |
+      install -Dm644 ${CRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb \
+        ${CRAFT_PART_INSTALL}/dtbs/riscv64-virt.dtb
 
-      snapcraftctl build
-      snapcraftctl set-version $(dpkg-parsechangelog -l ${SNAPCRAFT_PART_SRC}/debian.riscv/changelog -S version)
-
-      mkdir -p ${SNAPCRAFT_PART_INSTALL}/dtbs
-      cp -f ${SNAPCRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb ${SNAPCRAFT_PART_INSTALL}/dtbs/
+      craftctl default
+      craftctl set version=$(ls ${CRAFT_PART_INSTALL}/modules/ | cut -f1 -d/)
     stage:
-      - -config-*
-      - -Image-*
-      - -initrd.img-*
-      - -System.map-*
-      - -modules/*/build
-      - -modules/*/source
-    override-prime: |
-      snapcraftctl prime
-      ${SNAPCRAFT_STAGE}/trim-firmware ${SNAPCRAFT_PRIME}
+      - -boot/
+      - -etc/
+      - -usr/
+    organize:
+      boot/vmlinuz-*: Image
+      boot/config-*: kconfig
+      lib/modules: modules/
+      lib/firmware/regulatory.db*: firmware/
+      usr/src/linux-headers-*/Module.symvers: Module.symvers
+    prime:
+      - -Image
+
+  initrd:
+    after: [kernel]
+    plugin: nil
+    build-packages:
+      - lz4
+      - kmod
+    override-build: |
+      KVER=5.15.0-1020-generic
+
+      cp -f ${CRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.img ./
+
+      lz4cat uc-initrd_*_riscv64.img | cpio -idm
+      rm -f uc-initrd_*_riscv64.img
+
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/fs/nls/nls_iso8859-1.ko \
+        lib/modules/${KVER}/kernel/fs/nls/nls_iso8859-1.ko
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/fs/fuse/virtiofs.ko \
+        lib/modules/${KVER}/kernel/fs/fuse/virtiofs.ko
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/drivers/block/virtio_blk.ko \
+        lib/modules/${KVER}/kernel/drivers/block/virtio_blk.ko
+
+      depmod -avb . ${KVER}
+
+      find . | cpio -o -H newc -R 0:0 | lz4 -9 -l > ${CRAFT_PART_INSTALL}/initrd.img
+    prime:
+      - -initrd.img
+
+  firmware:
+    plugin: nil
+    stage-packages:
+      - linux-firmware
+    organize:
+      lib/firmware: firmware/
