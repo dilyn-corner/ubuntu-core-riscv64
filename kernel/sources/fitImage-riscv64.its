@@ -1,0 +1,63 @@
+/*
+ * U-Boot uImage source file for the Qemu Virtual Board
+ */
+
+/dts-v1/;
+  
+/ {
+	description = "Ubuntu Core kernel, ramdisk, and FDT blob for Qemu's Virtual RISC-V64 Machine";
+	#address-cells = <1>;
+  
+	images {
+		kernel {
+			description = "Ubuntu Kernel";
+			data = /incbin/("Image");
+			type = "kernel";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x82250000>;
+			entry = <0x82250000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+		ramdisk {
+			description = "Ubuntu Core ramdisk";
+			data = /incbin/("initrd.img");
+			type = "ramdisk";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x90000000>;
+			entry = <0x90000000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+		fdt-riscv64-virt {
+			description = "Qemu Virtual Machine DTB";
+			data = /incbin/("dtbs/riscv64-virt.dtb");
+			type = "flat_dt";
+			arch = "riscv";
+			compression = "none";
+			load =  <0x82200000>;
+			entry = <0x82200000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+	configurations {
+		default = "riscv64-virt";
+		riscv64-virt {
+			description = "Qemu Virtual Board";
+			kernel = "kernel";
+			ramdisk = "ramdisk";
+			fdt = "fdt-riscv64-virt";
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+};
