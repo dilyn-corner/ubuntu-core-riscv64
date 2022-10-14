@@ -7,7 +7,6 @@ type: kernel
 architectures:
   - build-on:  [amd64, riscv64]
     build-for: [riscv64]
-
 grade: stable
 confinement: strict
 
@@ -23,12 +22,9 @@ package-repositories:
 parts:
   kernel:
     plugin: nil
-    stage-packages: 
+    stage-packages:
       - linux-generic:${CRAFT_TARGET_ARCH}
     override-stage: |
-      install -Dm644 ${CRAFT_PROJECT_DIR}/sources/riscv64-virt.dtb \
-        ${CRAFT_PART_INSTALL}/dtbs/riscv64-virt.dtb
-
       craftctl default
       craftctl set version=$(ls ${CRAFT_PART_INSTALL}/modules/ | cut -f1 -d/)
     stage:
@@ -43,17 +39,34 @@ parts:
       usr/src/linux-headers-*/Module.symvers: Module.symvers
     prime:
       - -Image
+      # Remove large modules that will never be used
+      - -modules/*/kernel/drivers/gpu/drm/amd
+      - -modules/*/kernel/drivers/gpu/drm/nouveau
+      - -modules/*/kernel/drivers/gpu/drm/radeon
+      - -modules/*/kernel/drivers/scsi
+      - -modules/*/kernel/drivers/net/can
+      - -modules/*/kernel/drivers/net/dsa
+      - -modules/*/kernel/drivers/net/wireless/ath
+      - -modules/*/kernel/drivers/net/wireless/intel
+      - -modules/*/kernel/drivers/net/wireless/mediatek
+      - -modules/*/kernel/drivers/net/wireless/broadcom
+      - -modules/*/kernel/drivers/net/wireless/marvell
+      - -modules/*/kernel/drivers/net/wireless/ralink
+      - -modules/*/kernel/drivers/net/wireless/intersil
+      - -modules/*/kernel/drivers/net/wireless/ti
+      - -modules/*/kernel/drivers/infiniband
+      - -modules/*/kernel/drivers/sound/pci
+      - -modules/*/kernel/drivers/comedi
 
   initrd:
     after: [kernel]
     plugin: nil
+    source: initrd
     build-packages:
       - lz4
       - kmod
     override-build: |
       KVER=5.15.0-1020-generic
-
-      cp -f ${CRAFT_PROJECT_DIR}/sources/uc-initrd_*_riscv64.img ./
 
       lz4cat uc-initrd_*_riscv64.img | cpio -idm
       rm -f uc-initrd_*_riscv64.img
@@ -77,17 +90,62 @@ parts:
       - linux-firmware
     organize:
       lib/firmware: firmware/
+    stage:
+      - -usr
+      - -lib
+      # Remove large firmware files that will never be used
+      - -firmware/amd
+      - -firmware/amdgpu
+      - -firmware/asihpi
+      - -firmware/cavium
+      - -firmware/cxgb3
+      - -firmware/cxgb4
+      - -firmware/dpaa2
+      - -firmware/i915
+      - -firmware/intel
+      - -firmware/iwlwifi-*
+      - -firmware/liquidio
+      - -firmware/matrox
+      - -firmware/mediatek
+      - -firmware/mellanox
+      - -firmware/mrvl
+      - -firmware/moxa
+      - -firmware/netronome
+      - -firmware/nvidia
+      - -firmware/qed
+      - -firmware/radeon
+      - -firmware/rockchip
+      - -firmware/ath10k/QCA9377/hw1.0/firmware-5.bin
+      - -firmware/ath3k-1.fw
+      - -firmware/qca/htbtfw20.tlv
+      - -firmware/qcom
+      - -firmware/s5p*
+      - -firmware/ath11k
+      - -firmware/ath10k
+      - -firmware/brcm
+      - -firmware/vsc
+      - -firmware/cypress
+
+  dtb:
+    plugin: nil
+    build-packages:
+      - qemu-system-misc
+      - device-tree-compiler
+    override-build: |
+      qemu-system-${CRAFT_TARGET_ARCH} -machine virt -m 2G -smp 1 \
+        -machine dumpdtb=${CRAFT_PART_INSTALL}/qemu.dtb
+    prime:
+      - -*
 
   fit-image:
-    after: [kernel, initrd]
+    after:
+      - kernel
+      - initrd
+      - dtb
     plugin: nil
     build-packages:
       - u-boot-tools
-    override-stage: |
-      cp -f ${CRAFT_PROJECT_DIR}/sources/fitImage-riscv64.its ./
-
-      mkimage \
-        -f ${CRAFT_STAGE}/fitImage-riscv64.its \
-        ${SNAPCRAFT_PRIME}/kernel.img
-    prime:
-       - -fitImage-riscv64.its
+    source: fit-image
+    override-build: |
+      mkimage -f ${CRAFT_PART_BUILD}/fitImage-riscv64.its \
+        ${CRAFT_PART_INSTALL}/kernel.img
