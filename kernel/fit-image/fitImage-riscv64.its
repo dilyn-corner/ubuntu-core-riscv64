@@ -3,28 +3,28 @@
  */
 
 /dts-v1/;
-  
+
 / {
 	description = "Ubuntu Core kernel, ramdisk, and FDT blob for Qemu's Virtual RISC-V64 Machine";
 	#address-cells = <1>;
-  
+
 	images {
 		kernel {
 			description = "Ubuntu Kernel";
-			data = /incbin/("Image");
+			data = /incbin/("../../../stage/Image");
 			type = "kernel";
 			arch = "riscv";
 			os = "linux";
 			compression = "none";
-			load =  <0x82250000>;
-			entry = <0x82250000>;
+			load =  <0xb0000000>;
+			entry = <0xb0000000>;
 			hash {
 				algo = "sha256";
 			};
 		};
 		ramdisk {
 			description = "Ubuntu Core ramdisk";
-			data = /incbin/("initrd.img");
+			data = /incbin/("../../../stage/initrd.img");
 			type = "ramdisk";
 			arch = "riscv";
 			os = "linux";
@@ -37,12 +37,12 @@
 		};
 		fdt-riscv64-virt {
 			description = "Qemu Virtual Machine DTB";
-			data = /incbin/("dtbs/riscv64-virt.dtb");
+			data = /incbin/("../../../stage/qemu.dtb");
 			type = "flat_dt";
 			arch = "riscv";
 			compression = "none";
-			load =  <0x82200000>;
-			entry = <0x82200000>;
+			load =  <0x88000000>;
+			entry = <0x88000000>;
 			hash {
 				algo = "sha256";
 			};
