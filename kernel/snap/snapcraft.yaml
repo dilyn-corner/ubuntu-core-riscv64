@@ -77,6 +77,12 @@ parts:
         lib/modules/${KVER}/kernel/fs/fuse/virtiofs.ko
       install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/drivers/block/virtio_blk.ko \
         lib/modules/${KVER}/kernel/drivers/block/virtio_blk.ko
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/drivers/net/virtio_net.ko \
+        lib/modules/${KVER}/kernel/drivers/net/virtio_net.ko
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/net/core/failover.ko \
+        lib/modules/${KVER}/kernel/net/core/failover.ko
+      install -Dm644 ${CRAFT_STAGE}/modules/${KVER}/kernel/drivers/net/net_failover.ko \
+        lib/modules/${KVER}/kernel/drivers/net/net_failover.ko
 
       depmod -avb . ${KVER}
 
