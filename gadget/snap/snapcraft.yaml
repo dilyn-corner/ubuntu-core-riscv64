@@ -71,6 +71,7 @@ parts:
     source-branch: d1-wip
     source-depth: 1
     build-packages:
+      - bison
       - build-essential
       - libpython3-dev
       - libssl-dev
