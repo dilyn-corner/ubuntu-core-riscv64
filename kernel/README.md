@@ -1,19 +1,24 @@
 # The Kernel Snap
 
 The kernel snap is a powerful snap. It includes both the kernel image as well as
-the initrd for Ubuntu Core. The kernel can be very device specific. Be sure to
-modify the `snap/snapcraft.yaml` for the proper source, config, and device tree
-files for your particular device.
+the initrd for Ubuntu Core. The kernel can be very device specific.
 
-This specific kernel is built for Qemu's RISC-V virt machine. No device tree is
-required for this machine; Qemu loads it into the machine's memory for us.
+This specific kernel is built for Qemu's RISC-V virt machine. Qemu bundles its
+own device tree for the RISC-V virt machine and one isn't available in the
+kernel source tree. So at snap build-time we dump the dtb file. Note that
+the machine definition in the `qemu-system-riscv64` invocation must match the
+dtb file used to run the machine. This means that if we want to use e.g. the
+full 8 cores available on the virt machine, we would have to modify both the
+snap and the Qemu invocation. 
 
 Later kernel will provide better RISC-V support; I would recommend at least
-5.11, but any RISC-V supporting kernel should work well enough.
+5.11, but any RISC-V supporting kernel should work well enough. Here we use the
+kernel debian package available directly from the Ubuntu archives for
+simplicity and to speed up snap building.
 
 Building:
 
-`snapcraft --destructive-mode --target-arch=riscv64 --enable-experimental-target-arch`
+`snapcraft`
 
 ## For Beginners
 
