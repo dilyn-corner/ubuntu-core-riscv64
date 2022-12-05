@@ -60,6 +60,24 @@ parts:
       - -initrd.img-*
       - -modules
       - -System.map*
+    prime:
+      - -modules/*/kernel/drivers/gpu/drm/amd
+      - -modules/*/kernel/drivers/gpu/drm/nouveau
+      - -modules/*/kernel/drivers/gpu/drm/radeon
+      - -modules/*/kernel/drivers/scsi
+      - -modules/*/kernel/drivers/net/can
+      - -modules/*/kernel/drivers/net/dsa
+      - -modules/*/kernel/drivers/net/wireless/ath
+      - -modules/*/kernel/drivers/net/wireless/intel
+      - -modules/*/kernel/drivers/net/wireless/mediatek
+      - -modules/*/kernel/drivers/net/wireless/broadcom
+      - -modules/*/kernel/drivers/net/wireless/marvell
+      - -modules/*/kernel/drivers/net/wireless/ralink
+      - -modules/*/kernel/drivers/net/wireless/intersil
+      - -modules/*/kernel/drivers/net/wireless/ti
+      - -modules/*/kernel/drivers/infiniband
+      - -modules/*/kernel/drivers/sound/pci
+      - -modules/*/kernel/drivers/comedi
 
   wlan-driver:
     after: [kernel]
