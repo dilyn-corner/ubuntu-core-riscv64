@@ -54,13 +54,15 @@ parts:
           ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
-    stage: 
+    stage:
       - -config*
       - -Image-*
       - -initrd.img-*
       - -modules
       - -System.map*
     prime:
+      - -Image
+      - -initrd.img
       - -modules/*/kernel/drivers/gpu/drm/amd
       - -modules/*/kernel/drivers/gpu/drm/nouveau
       - -modules/*/kernel/drivers/gpu/drm/radeon
@@ -78,6 +80,8 @@ parts:
       - -modules/*/kernel/drivers/infiniband
       - -modules/*/kernel/drivers/sound/pci
       - -modules/*/kernel/drivers/comedi
+    organize:
+      kernel.img: Image
 
   wlan-driver:
     after: [kernel]
@@ -154,6 +158,16 @@ parts:
       "*": firmware/
     stage:
       - firmware/rtl_bt/rtl8723ds_*.bin
+
+  fit-image:
+    after: [kernel]
+    plugin: nil
+    source: fit-image
+    build-packages:
+      - u-boot-tools
+    override-build: |
+      mkimage -f fitImage-riscv64.its \
+        ${SNAPCRAFT_PART_INSTALL}/kernel.img
 
 build-packages:
   - bison

@@ -1,0 +1,63 @@
+/dts-v1/;
+
+/ {
+	description = "Ubuntu Core kernel, ramdisk and FDT blobs";
+	#address-cells = <1>;
+
+	images {
+		kernel-ubuntu {
+			description = "ubuntu-kernel";
+			data = /incbin/("../../../stage/Image");
+			type = "kernel";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x43000000>;
+			entry = <0x43000000>;
+
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+
+		ramdisk-uc {
+			description = "Ubuntu-Core-ramdisk";
+			data = /incbin/("../../../stage/initrd.img");
+			type = "ramdisk";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load =  <0x45000000>;
+			entry = <0x45000000>;
+
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+
+		fdt-sun20i-d1-lichee-rv-dock {
+			description = "Sipeed Lichee RV + Dock";
+			data = /incbin/("../../../stage/dtbs/sun20i-d1-lichee-rv-dock.dtb");
+			type = "flat_dt";
+			arch = "riscv";
+			compression = "none";
+			load =  <0x46000000>;
+			entry = <0x46000000>;
+
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+	};
+
+	configurations {
+		default = "sun20i-d1-lichee-rv-dock";
+
+		sun20i-d1-lichee-rv-dock {
+			description = "Sipeed Lichee RV + Dock";
+			kernel = "kernel-ubuntu";
+			ramdisk = "ramdisk-uc";
+			fdt = "fdt-sun20i-d1-lichee-rv-dock";
+		};
+	};
+};
