@@ -73,6 +73,7 @@ parts:
     build-packages:
       - bison
       - build-essential
+      - flex
       - libpython3-dev
       - libssl-dev
       - python3-distutils
