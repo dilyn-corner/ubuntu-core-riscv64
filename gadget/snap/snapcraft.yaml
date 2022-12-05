@@ -18,7 +18,7 @@ grade: stable
 parts:
   boot-scr:
     plugin: nil
-    source: sources/
+    source: u-boot/
     build-packages:
       - u-boot-tools
     override-build: |
@@ -100,7 +100,7 @@ parts:
 
       tools/mkimage \
         -T sunxi_toc1 \
-        -d ${CRAFT_PROJECT_DIR}/sources/toc1.cfg \
+        -d ${CRAFT_PROJECT_DIR}/u-boot/toc1.cfg \
         ${CRAFT_PART_INSTALL}/u-boot.toc1
 
       touch ${CRAFT_PART_INSTALL}/uboot.conf
