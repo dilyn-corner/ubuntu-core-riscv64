@@ -83,7 +83,7 @@ parts:
       - else:
         - gcc
     override-build: |
-      make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- lichee_rv_defconfig
+      make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- lichee_rv_dock_defconfig
 
       sed -i 's/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv"/CONFIG_DEFAULT_DEVICE_TREE="sun20i-d1-lichee-rv-dock"/' .config
       sed -i 's/# CONFIG_OF_LIBFDT_OVERLAY is not set/CONFIG_OF_LIBFDT_OVERLAY=y/' .config
