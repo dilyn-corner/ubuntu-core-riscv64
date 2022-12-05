@@ -89,7 +89,7 @@ parts:
       make CROSS_COMPILE=riscv64-linux-gnu- \
         KSRC="${SNAPCRAFT_PROJECT_DIR}/parts/kernel/build" \
         ARCH=riscv KVER=${KVER}
-      cp ${SNAPCRAFT_PART_BUILD}/8723ds.ko ${SNAPCRAFT_PART_INSTALL}/
+      cp -f ${SNAPCRAFT_PART_BUILD}/8723ds.ko ${SNAPCRAFT_PART_INSTALL}/
     stage:
       - -modules
 
