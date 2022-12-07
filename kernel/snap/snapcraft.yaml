@@ -33,9 +33,8 @@ parts:
     plugin: x-kernel
     source: https://git.launchpad.net/~dilyn-corner/ubuntu/+source/linux-riscv/+git/jammy
     source-type: git
-    source-branch: icicle
+    source-branch: icicle-fpga
     source-depth: 1
-    kdefconfig: [ "snappy_defconfig" ]
     kernel-compiler: riscv64-linux-gnu-gcc
     kernel-with-firmware: false
     kernel-image-target: Image
@@ -43,6 +42,7 @@ parts:
     kernel-initrd-compression: gz
     kernel-device-trees:
         - microchip/mpfs-icicle-kit
+    kdefconfig: ["snappy_defconfig"]
     kconfigs:
       - CONFIG_SYSTEM_REVOCATION_KEYS=""
       - CONFIG_SYSTEM_TRUSTED_KEYS=""
