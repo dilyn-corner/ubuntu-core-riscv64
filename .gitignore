@@ -1,13 +1,15 @@
 # Build artifacts
-*/parts
-*/stage
-*/prime
-*/*.snap
+parts
+stage
+prime
+*.snap
+!uc-initrd*.snap
 
-gadget/SoftConsole-*
+SoftConsole*
 
 # Crafty things
 *.model
 *.img
 *.manifest
 build
+creds
