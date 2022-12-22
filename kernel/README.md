@@ -9,9 +9,9 @@ kernel source tree. So at snap build-time we dump the dtb file. Note that
 the machine definition in the `qemu-system-riscv64` invocation must match the
 dtb file used to run the machine. This means that if we want to use e.g. the
 full 8 cores available on the virt machine, we would have to modify both the
-snap and the Qemu invocation. 
+snap and the Qemu invocation.
 
-Later kernel will provide better RISC-V support; I would recommend at least
+Later kernels will provide better RISC-V support; I would recommend at least
 5.11, but any RISC-V supporting kernel should work well enough. Here we use the
 kernel debian package available directly from the Ubuntu archives for
 simplicity and to speed up snap building.

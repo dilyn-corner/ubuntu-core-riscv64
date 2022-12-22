@@ -2,11 +2,14 @@ name: virt-kernel
 adopt-info: kernel
 build-base: core22
 summary: A RISC-V 64-bit kernel for Qemu's virt board
-description: This is a snapped kernel for an emulated RISC-V system.
+description: |
+  This is a snapped kernel for an emulated RISC-V system.
 type: kernel
+
 architectures:
   - build-on:  [amd64, riscv64]
     build-for: [riscv64]
+
 grade: stable
 confinement: strict
 
@@ -144,14 +147,11 @@ parts:
       - -*
 
   fit-image:
-    after:
-      - kernel
-      - initrd
-      - dtb
-    plugin: nil
+    after: [kernel, initrd, dtb]
+    plugin: dump
+    source: fit-image/
     build-packages:
       - u-boot-tools
-    source: fit-image
     override-build: |
-      mkimage -f ${CRAFT_PART_BUILD}/fitImage-riscv64.its \
+      mkimage -f fitImage-riscv64.its \
         ${CRAFT_PART_INSTALL}/kernel.img

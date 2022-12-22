@@ -28,10 +28,10 @@ sudo apt install qemu-system-misc opensbi u-boot-qemu
 
 ### Instructions
 
-**Note**: premade Ubuntu Core images is available for download from
+**Note**: premade Ubuntu Core images are available for download from
 [here](https://github.com/dilyn-corner/ubuntu-core-riscv64/releases)!
 
-If you are on an Ubuntu system (20.04+ tested), simple download the image and
+If you are on an Ubuntu system (20.04+ tested), simply download the image and
 execute the `qemu-run` script.
 
 If you are not on an Ubuntu system, you will have to build the gadget snap
@@ -57,12 +57,12 @@ The high-level instructions for this project are quite simple:
 5) Successfully boot Ubuntu Core on RISC-V
 
 Step 0 is optional -- all the steps to create an initrd were already performed
-and the resulting initrd snap can be found in [the kernel directory](kernel/sources)
+and the resulting initrd snap can be found in [the kernel directory](kernel/initrd)
 
 More detailed information can be found in the READMEs!
 
 You will require `snapcraft` and `ubuntu-image`. The latest commit tracks Ubuntu
-Core 22 and supports snapcraft 7.x. 
+Core 22 and supports snapcraft 7.x.
 
 ```
 snap install --classic snapcraft
@@ -73,12 +73,12 @@ For the model:
 
 ```
 # Make relevant modifications to ubuntu-core-XX-riscv64.json if needed
-# Be sure to change authority-id, brand-id; use the id reported by 
+# Be sure to change authority-id, brand-id; use the id reported by
 # snapcraft whoami | grep id
 snapcraft create-key   riscy-key
 snapcraft register-key riscy-key
 
-snap sign -k riscy-key > ubuntu-core-XX-riscv64.model < ubuntu-core-XX-riscv64.json
+snap sign -k riscy-key ubuntu-core-XX-riscv64.json > ubuntu-core-XX-riscv64.model
 ```
 
 You can create an image based on that signed model assertion with:
@@ -173,7 +173,7 @@ Port forwarding for SSH access.
 }
 ```
 
-`{authority,brand}-id` point at me, the signer of the model. 
+`{authority,brand}-id` point at me, the signer of the model.
 
 `grade` is dangerous because we have to sideload our kernel and gadget snaps.
 
