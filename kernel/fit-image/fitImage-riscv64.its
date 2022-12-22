@@ -3,15 +3,15 @@
  */
 
 /dts-v1/;
-  
+
 / {
 	description = "Ubuntu Core kernel, ramdisk, and FDT blob for Microchip's Polarfire SoC Icicle";
 	#address-cells = <1>;
-  
+
 	images {
 		kernel {
 			description = "Ubuntu Kernel";
-			data = /incbin/("Image");
+			data = /incbin/("../../../stage/Image");
 			type = "kernel";
 			arch = "riscv";
 			os = "linux";
@@ -24,7 +24,7 @@
 		};
 		ramdisk {
 			description = "Ubuntu Core ramdisk";
-			data = /incbin/("initrd.img");
+			data = /incbin/("../../../stage/initrd.img");
 			type = "ramdisk";
 			arch = "riscv";
 			os = "linux";
@@ -37,7 +37,7 @@
 		};
 		fdt-mpfs-icicle-kit.dtb {
 			description = "Polarfire SoC Icicle DTB";
-			data = /incbin/("dtbs/mpfs-icicle-kit.dtb");
+			data = /incbin/("../../../stage/dtbs/mpfs-icicle-kit.dtb");
 			type = "flat_dt";
 			arch = "riscv";
 			compression = "none";

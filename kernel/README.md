@@ -9,12 +9,19 @@ Kit](https://github.com/linux4microchip/linux).
 More specifically, this kernel builds from based on the [Ubuntu RISC-V Jammy
 kernel](https://git.launchpad.net/~dilyn-corner/ubuntu/+source/linux-riscv/+git/jammy?h=icicle), with patches plucked from the Microchip kernel and applied to the Ubuntu kernel.
 
+There are currently daily builds of Ubuntu Server supporting this board. You can
+find them [here](http://download.nust.na/pub/ubuntu-cdimage/ubuntu-server/daily-preinstalled/current/)
+
 Because `snapcraft 7` does not support user-defined plugins when using a Core22
 base, we will make use of `snapcraft 6` and define `base: core20`. This
 shouldn't result in any issues with userspace, and the only potential problem is
 with `snapd-bootstrap` during first-boot. Luckily, there were no real changes
 between Core20 and Core22's implementation of `snapd-bootstrap`, and so we can
 "get away" with this abnormal deviation.
+
+TODO: once an official kernel package for this hardware is released, we should
+switch to it. As it stands, it sounds like our daily builds have subpar kernels.
+We'll keep using mine until better hardware support lands.
 
 The initrd snap was rebuilt from a Focal rootfs running natively on this
 hardware using the kernel and modules built for this snap.

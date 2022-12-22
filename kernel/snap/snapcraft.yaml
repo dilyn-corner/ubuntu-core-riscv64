@@ -1,13 +1,15 @@
 name: polarfire-kernel
 version: 5.15-mchp
 summary: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
-description: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
+description: |
+  A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
 type: kernel
 # TODO: evading user-defined plugin issues by choosing a different base
 # This should not impact anything related to Ubuntu Core 22;
 # the only "user-space" difference is the initrd, and snapd-bootstrap did not
 # change between Core20 and Core22.
 build-base: core20
+
 architectures:
   - build-on: [amd64, riscv64]
     run-on:   [riscv64]
@@ -22,7 +24,9 @@ parts:
     source-type: git
     source-branch: main
     source-depth: 1
-    stage-packages: [linux-firmware, wireless-regdb]
+    stage-packages:
+      - linux-firmware
+      - wireless-regdb
     prime:
       - firmware
     organize:
@@ -68,7 +72,7 @@ parts:
         - gcc
     override-build: |
       cp -f ${SNAPCRAFT_PROJECT_DIR}/initrd/uc-initrd_*_riscv64.snap \
-        ${SNAPCRAFT_PART_BUILD}/uc-initrd_20-stable_riscv64.snap
+        uc-initrd_20-stable_riscv64.snap
 
       snapcraftctl build
     stage:
@@ -90,13 +94,11 @@ parts:
 
   fit-image:
     after: [kernel]
-    source: fit-image/
     plugin: dump
-    override-stage: |
-      snapcraftctl stage
-
+    source: fit-image/
+    build-packages:
+      - u-boot-tools
+    override-build: |
       mkimage \
-        -f ${SNAPCRAFT_STAGE}/fitImage-riscv64.its \
-        ${SNAPCRAFT_PRIME}/kernel.img
-    prime:
-       - -fitImage-riscv64.its
+        -f fitImage-riscv64.its \
+        ${SNAPCRAFT_PART_INSTALL}/kernel.img

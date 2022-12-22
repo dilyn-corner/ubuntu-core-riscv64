@@ -33,14 +33,14 @@ The high level instructions for this project are quite simple:
 5) Successfully boot Ubuntu Core on RISC-V
 
 Step 0 is optional -- all the steps to create an initrd were already performed
-and the resulting initrd snap can be found in [the kernel directory](kernel/sources)
+and the resulting initrd snap can be found in [the kernel directory](kernel/initrd)
 
 More detailed information can be found in the READMEs!
 
 For the model:
 
 ```
-# Make relevant modifications to ubuntu-core-20-riscv64.json if needed
+# Make relevant modifications to ubuntu-core-XX-riscv64.json if needed
 # Be sure to change authority-id, brand-id
 snapcraft create-key   riscy-key
 snapcraft register-key riscy-key
@@ -54,21 +54,25 @@ ubuntu-image snap        \
 
 Once you have built the Ubuntu Core image, put the Icicle kit into upload mode
 and flash the image to the eMMC in your favorite way. This can be done by
-plugging a microUSB cable into both of the ports on the board and pulling up the
-supervisor console using `screen /dev/ttyUSB0 115200`. Boot the board and
-interrupt the boot sequence, then enter `usbdmsc` to make the eMMC available for
-writing on the host machine. Use a tool like `dd` to write the image (`dd
-if=polarfire.img of=/dev/sdX bs=32M status=progress; sync`), use `ctrl+c` in
-`screen` to end the `usbdmsc` command, and execute `boot` to boot into Ubuntu
-Core! `screen /dev/ttyUSB1 115200` should show you the boot process from
-`u-boot` to Linux to Core.
+plugging a microUSB cable into the ports near the SD card and ethernet ports on
+the board and pulling up the supervisor console using `screen /dev/ttyUSB0
+115200`. Boot the board and interrupt the boot sequence, then enter `usbdmsc` to
+make the eMMC available for writing on the host machine. Use a tool like `dd` to
+write the image (`dd if=polarfire.img of=/dev/sdX bs=32M status=progress;
+sync`), use `ctrl+c` in `screen` to end the `usbdmsc` command, and execute
+`boot` to boot into Ubuntu Core! `screen /dev/ttyUSB1 115200` should show you
+the boot process from `u-boot` to Linux to Core.
 
 
 ### Future work
 
-TBD.
-
 Some software fixes are required from upstream for a fully functional device.
+
+Currently the NVMe drive does not appear on every boot. This appears to be a
+hardware bug.
+
+The SD card slot may or may not be usable in Linux. However, you can still boot
+from it.
 
 ```
 {
@@ -106,7 +110,7 @@ Some software fixes are required from upstream for a fully functional device.
 }
 ```
 
-`{authority,brand}-id` point at the official Snapcraft store for simplicity.
+`{authority,brand}-id` point at me, the signer of the model.
 
 `grade` is dangerous because we have to sideload our kernel and gadget snaps.
 
