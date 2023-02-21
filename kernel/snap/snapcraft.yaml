@@ -1,99 +1,110 @@
 name: polarfire-kernel
-version: 5.15-mchp
 summary: A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
 description: |
   A RISC-V 64-bit kernel for the Microchip Polarfire SoC Icecicle
 type: kernel
-# TODO: evading user-defined plugin issues by choosing a different base
-# This should not impact anything related to Ubuntu Core 22;
-# the only "user-space" difference is the initrd, and snapd-bootstrap did not
-# change between Core20 and Core22.
-build-base: core20
+build-base: core22
+adopt-info: kernel
 
 architectures:
   - build-on: [amd64, riscv64]
-    run-on:   [riscv64]
+    build-for: [riscv64]
 
-grade: stable
 confinement: strict
+
+package-repositories:
+  - type: apt
+    ppa: snappy-dev/image
 
 parts:
   firmware:
-    plugin: dump
-    source: https://git.launchpad.net/~canonical-kernel-snaps/+git/kernel-snaps-uc22
-    source-type: git
-    source-branch: main
-    source-depth: 1
+    plugin: nil
     stage-packages:
       - linux-firmware
       - wireless-regdb
-    prime:
-      - firmware
     organize:
-        lib/firmware: firmware
+      lib/firmware: firmware
+    stage:
+      - -lib
+      - -usr
+      # Remove firmware files for things that will never be needed
+      - -firmware/mellanox
+      - -firmware/mrvl
+      - -firmware/qcom
+      - -firmware/netronome
+      - -firmware/intel
+      - -firmware/liquidio
+      - -firmware/i915
+      - -firmware/brcm
+      - -firmware/qed
 
   kernel:
-    after: [firmware]
-    plugin: x-kernel
-    source: https://git.launchpad.net/~dilyn-corner/ubuntu/+source/linux-riscv/+git/jammy
-    source-type: git
-    source-branch: icicle-fpga
-    source-depth: 1
-    kernel-compiler: riscv64-linux-gnu-gcc
-    kernel-with-firmware: false
-    kernel-image-target: Image
-    kernel-initrd-channel: stable
-    kernel-initrd-compression: gz
-    kernel-device-trees:
-        - microchip/mpfs-icicle-kit
-    kdefconfig: ["snappy_defconfig"]
-    kconfigs:
-      - CONFIG_SYSTEM_REVOCATION_KEYS=""
-      - CONFIG_SYSTEM_TRUSTED_KEYS=""
-      - CONFIG_DEFAULT_HOSTNAME="Hermes"
-      - CONFIG_DEBUG_INFO_BTF=n
-    build-packages:
-      - bison
-      - cpio
-      - device-tree-compiler
-      - dpkg-dev
-      - dwarves
-      - flex
-      - libelf-dev
-      - libfdt-dev
-      - libssl-dev
-      - lz4
-      - pkg-config
-      - u-boot-tools
-      - on amd64:
-        - binutils-riscv64-linux-gnu
-        - gcc-riscv64-linux-gnu
-      - else:
-        - gcc
+    plugin: nil
+    stage-packages:
+      - linux-generic:${CRAFT_TARGET_ARCH}
     override-build: |
-      cp -f ${SNAPCRAFT_PROJECT_DIR}/initrd/uc-initrd_*_riscv64.snap \
-        uc-initrd_20-stable_riscv64.snap
+      craftctl default
 
-      snapcraftctl build
+      KERNEL_VER="$(ls ${CRAFT_PART_INSTALL}/lib/modules)"
+      echo ${KERNEL_VER} > ${CRAFT_PART_INSTALL}/.kernel_ver
+
+      depmod -a -b ${CRAFT_PART_INSTALL} ${KERNEL_VER}
+
+      craftctl set version="${KERNEL_VER}"
+      craftctl set grade="stable"
     stage:
-      - -config*
-      - -canonical-*
-      - -Image-*
-      - -initrd.img-*
-      - -Makefile*
-      - -System.map*
+      - Image
+      - modules
+      - dtbs
+      - .kernel_ver
     prime:
-      - -Image
-      - -dtbs
-      - -initrd.img
-    override-prime: |
-      snapcraftctl prime
-      ${SNAPCRAFT_STAGE}/trim-firmware ${SNAPCRAFT_PRIME}
+      - modules
     organize:
-      kernel.img: Image
+      boot/vmlinuz-*: Image
+      lib/modules/*: modules
+      lib/firmware/*/device-tree: dtbs
+
+  # In order to support cross-compilation, we need to do a few tricks with
+  # downloading the initramfs package for the target arch
+  ubuntu-core-initramfs:
+    plugin: nil
+    override-pull: |
+      apt-get download ubuntu-core-initramfs:riscv64
+    override-build: |
+      dpkg -x ubuntu-core-initramfs*_riscv64.deb \
+        ${CRAFT_PART_INSTALL}
+    organize:
+      usr/lib/ubuntu-core-initramfs: ubuntu-core-initramfs
+    prime:
+      - -*
+
+  initrd:
+    plugin: nil
+    after:
+      - kernel
+      - ubuntu-core-initramfs
+      - firmware
+    build-packages:
+      # Use the native package to actually build the initrd
+      - ubuntu-core-initramfs
+    override-build: |
+      KERNEL_VERSION=$(cat ${CRAFT_STAGE}/.kernel_ver)
+      ubuntu-core-initramfs create-initrd \
+        --kernelver=${KERNEL_VERSION} \
+        --kerneldir=${CRAFT_STAGE}/modules \
+        --skeleton=${CRAFT_STAGE}/ubuntu-core-initramfs \
+        --firmwaredir=${CRAFT_STAGE}/firmware \
+        --output=${CRAFT_PART_INSTALL}/initrd.img
+    organize:
+      # Remove version suffix
+      initrd.img*: initrd.img
+    prime:
+      - -*
 
   fit-image:
-    after: [kernel]
+    after:
+      - kernel
+      - initrd
     plugin: dump
     source: fit-image/
     build-packages:
@@ -101,4 +112,4 @@ parts:
     override-build: |
       mkimage \
         -f fitImage-riscv64.its \
-        ${SNAPCRAFT_PART_INSTALL}/kernel.img
+        ${CRAFT_PART_INSTALL}/kernel.img
