@@ -37,7 +37,7 @@
 		};
 		fdt-mpfs-icicle-kit.dtb {
 			description = "Polarfire SoC Icicle DTB";
-			data = /incbin/("../../../stage/dtbs/mpfs-icicle-kit.dtb");
+			data = /incbin/("../../../stage/dtbs/microchip/mpfs-icicle-kit.dtb");
 			type = "flat_dt";
 			arch = "riscv";
 			compression = "none";
@@ -49,7 +49,7 @@
 		};
 	};
 	configurations {
-	default = "mpfs-icicle-kit.dtb";
+		default = "mpfs-icicle-kit.dtb";
 		mpfs-icicle-kit.dtb {
 			description = "Polarfire SoC Icicle";
 			kernel = "kernel";
