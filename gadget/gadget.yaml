@@ -13,11 +13,15 @@ volumes:
             target: /
           - source: cloud.conf
             target: /
+        update:
+          edition: 1
       - name: hss
         type: 21686148-6449-6E6F-744E-656564454649
         size: 4M
         content:
           - image: payload.bin
+        update:
+          edition: 1
       - name: ubuntu-boot
         role: system-boot
         filesystem: ext4
@@ -30,6 +34,8 @@ volumes:
             target: /
           - source: cloud.conf
             target: /
+        update:
+          edition: 1
       - name: ubuntu-save
         role: system-save
         filesystem: ext4
